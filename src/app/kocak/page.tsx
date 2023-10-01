@@ -1,13 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 
-import Modal from '@/app/components/modal';
 import Dropdown from '@/app/components/dropdown';
-
-interface CardProps {
-  title: string;
-  amount: string;
-}
 
 interface TableRowProps {
   name: string;
