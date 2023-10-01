@@ -1,71 +1,111 @@
 'use client';
 
-import Head from 'next/head';
-import * as React from 'react';
+import React, { useState } from 'react';
 
-import ArrowLink from '@/components/links/ArrowLink';
-import ButtonLink from '@/components/links/ButtonLink';
-import UnderlineLink from '@/components/links/UnderlineLink';
-import UnstyledLink from '@/components/links/UnstyledLink';
+import Modal from '@/app/components/modal';
 
-/**
- * SVGR Support
- * Caveat: No React Props Type.
- *
- * You can override the next-env if the type is important to you
- * @see https://stackoverflow.com/questions/68103844/how-to-override-next-js-svg-module-declaration
- */
-import Logo from '~/svg/Logo.svg';
+interface CardProps {
+  title: string;
+  amount: string;
+}
 
-// !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
-// Before you begin editing, follow all comments with `STARTERCONF`,
-// to customize the default configuration.
+interface TableRowProps {
+  name: string;
+  sender: string;
+  receiver: string;
+  amount: string;
+}
 
 export default function HomePage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
   return (
-    <main>
-      <Head>
-        <title>Hi</title>
-      </Head>
-      <section className='bg-white'>
-        <div className='layout relative flex min-h-screen flex-col items-center justify-center py-12 text-center'>
-          <Logo className='w-16' />
-          <h1 className='mt-4'>Next.js + Tailwind CSS + TypeScript Starter</h1>
-          <p className='mt-2 text-sm text-gray-800'>
-            A starter for Next.js, Tailwind CSS, and TypeScript with Absolute
-            Import, Seo, Link component, pre-configured with Husky{' '}
-          </p>
-          <p className='mt-2 text-sm text-gray-700'>
-            <ArrowLink href='https://github.com/theodorusclarence/ts-nextjs-tailwind-starter'>
-              See the repository
-            </ArrowLink>
-          </p>
+    <main className='container mx-auto px-2 py-10 xl:mx-auto'>
+      <div className='flex justify-center pb-7'>
+        <h1 className='text-xl font-bold'>UANG BULANAN 3==D</h1>
+      </div>
 
-          <ButtonLink className='mt-6' href='/components' variant='light'>
-            See all components
-          </ButtonLink>
+      <div className='grid min-h-[11rem] grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4'>
+        <Card title='Total Amount in the Account' amount='Rp.0' />
+        <Card title='Total Debt' amount='Rp.0' />
+        <Card title='Pusing' amount='Rp.0' />
+        <Card title='Total Expenses' amount='Rp.0' />
+      </div>
 
-          <UnstyledLink
-            href='https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Ftheodorusclarence%2Fts-nextjs-tailwind-starter'
-            className='mt-4'
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              width='92'
-              height='32'
-              src='https://vercel.com/button'
-              alt='Deploy with Vercel'
-            />
-          </UnstyledLink>
-
-          <footer className='absolute bottom-2 text-gray-700'>
-            © {new Date().getFullYear()} By{' '}
-            <UnderlineLink href='https://theodorusclarence.com?ref=tsnextstarter'>
-              Theodorus Clarence
-            </UnderlineLink>
-          </footer>
+      <div className='mt-5 flex justify-between'>
+        <button
+          onClick={openModal}
+          className='focus:shadow-outline inline-flex h-10 items-center justify-center rounded-lg bg-gray-900 px-6 font-medium tracking-wide text-white transition duration-200 hover:bg-gray-800 focus:outline-none'
+        >
+          Add New Transaction
+        </button>
+      </div>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <div className='h-[600px]  w-[300px]'>
+          <h2 className='mb-4 text-2xl font-semibold'>Modal Content</h2>
+          <p>This is your modal content.</p>
         </div>
-      </section>
+      </Modal>
+
+      <div className='mt-5 rounded-lg bg-gray-200'>
+        <Table />
+      </div>
     </main>
+  );
+}
+
+function Card({ title, amount }: CardProps) {
+  return (
+    <div className='rounded-lg bg-gray-200 p-4'>
+      <p className='font-semibold uppercase'>{title}</p>
+      <p className='text-xl font-bold'>{amount}</p>
+    </div>
+  );
+}
+
+function Table() {
+  return (
+    <div className='overflow-x-auto'>
+      <table className='min-w-full text-left text-sm font-light'>
+        <thead>
+          <tr>
+            <th className='px-6 py-4'>Transactions Name</th>
+            <th className='px-6 py-4'>Sender</th>
+            <th className='px-6 py-4'>Receiver</th>
+            <th className='px-6 py-4'>Transactions Amount</th>
+            <th className='px-6 py-4'>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <TableRow name='Mark' sender='Otto' receiver='@mdo' amount='20000' />
+          <TableRow name='Mark' sender='Otto' receiver='@mdo' amount='20000' />
+          <TableRow name='Mark' sender='Otto' receiver='@mdo' amount='20000' />
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function TableRow({ name, sender, receiver, amount }: TableRowProps) {
+  return (
+    <tr className='border-b hover:bg-gray-100'>
+      <td className='px-6 py-4'>{name}</td>
+      <td className='px-6 py-4'>{sender}</td>
+      <td className='px-6 py-4'>{receiver}</td>
+      <td className='px-6 py-4'>{amount}</td>
+      <td className='px-6 py-4'>
+        <div className='space-x-4'>
+          <button className='btn-primary'>Edit</button>
+          <button className='btn-primary'>Delete</button>
+        </div>
+      </td>
+    </tr>
   );
 }
