@@ -26,6 +26,8 @@ export default function HomePage() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  // test
   return (
     <main className='container mx-auto px-2 py-10 xl:mx-auto'>
       <div className='flex justify-center pb-7'>
