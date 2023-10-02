@@ -1,113 +1,90 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useQuery } from 'react-query';
 
-import Modal from '@/app/components/modal';
+import { formatCurrency } from '@/lib/utils';
+
+import Table from '@/app/components/table';
+import ModalHome from '@/app/home/ModalHome';
 
 interface CardProps {
   title: string;
   amount: string;
 }
 
-interface TableRowProps {
+interface BalanceAmountProps {
+  total_balance: number;
+}
+interface TotalDebtProps {
+  user_id: number;
   name: string;
-  sender: string;
-  receiver: string;
-  amount: string;
+  total_debt: number;
 }
 
+const getDataBalanceAmount = async () => {
+  try {
+    const data = await fetch(`http://localhost:3000/api/total-balance-amount`);
+    return data.json();
+  } catch (error) {
+    // console.log(error);
+  }
+};
+const getDataTotalDebt = async () => {
+  try {
+    const data = await fetch(`http://localhost:3000/api/house-debt`);
+    return data.json();
+  } catch (error) {
+    // console.log(error);
+  }
+};
+
+const sumDebt = (data?: TotalDebtProps[]) => {
+  if (!data) return 0;
+  return data.reduce((prev, curr) => {
+    return (prev += curr.total_debt);
+  }, 0);
+};
+
 export default function HomePage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { data: balanceAmount } = useQuery<BalanceAmountProps>(
+    'balance-amount',
+    getDataBalanceAmount
+  );
+  const { data: totalDebt } = useQuery<TotalDebtProps[]>(
+    'total-debt',
+    getDataTotalDebt
+  );
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  // test
   return (
-    <main className='container mx-auto px-2 py-10 xl:mx-auto'>
+    <main className='container mx-auto px-2 py-10 sm:px-20 md:px-10'>
       <div className='flex justify-center pb-7'>
-        <h1 className='text-xl font-bold'>UANG BULANAN 3==D</h1>
+        <h1 className='text-xl font-bold text-white'>UANG BULANAN</h1>
       </div>
 
-      <div className='grid min-h-[11rem] grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4'>
-        <Card title='Total Amount in the Account' amount='Rp.0' />
-        <Card title='Total Debt' amount='Rp.0' />
-        <Card title='Pusing' amount='Rp.0' />
-        <Card title='Total Expenses' amount='Rp.0' />
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4'>
+        <Card
+          title='Total Amount in the Account'
+          amount={formatCurrency(
+            balanceAmount ? Number(balanceAmount.total_balance) : 0
+          )}
+        />
+        <Card title='Total Debt' amount={formatCurrency(sumDebt(totalDebt))} />
+        <Card title='contribution' amount={formatCurrency(0)} />
+        <Card title='Total Expenses' amount={formatCurrency(0)} />
       </div>
 
-      <div className='mt-5 flex justify-between'>
-        <button
-          onClick={openModal}
-          className='focus:shadow-outline inline-flex h-10 items-center justify-center rounded-lg bg-gray-900 px-6 font-medium tracking-wide text-white transition duration-200 hover:bg-gray-800 focus:outline-none'
-        >
-          Add New Transaction
-        </button>
-      </div>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <div className='h-[600px]  w-[300px]'>
-          <h2 className='mb-4 text-2xl font-semibold'>Modal Content</h2>
-          <p>This is your modal content.</p>
-        </div>
-      </Modal>
-
-      <div className='mt-5 rounded-lg bg-gray-200'>
-        <Table />
-      </div>
+      <ModalHome />
+      <Table />
     </main>
   );
 }
 
 function Card({ title, amount }: CardProps) {
   return (
-    <div className='rounded-lg bg-gray-200 p-4'>
+    <div className='min-h-[8rem] rounded-lg bg-white p-4'>
       <p className='font-semibold uppercase'>{title}</p>
       <p className='text-xl font-bold'>{amount}</p>
     </div>
-  );
-}
-
-function Table() {
-  return (
-    <div className='overflow-x-auto'>
-      <table className='min-w-full text-left text-sm font-light'>
-        <thead>
-          <tr>
-            <th className='px-6 py-4'>Transactions Name</th>
-            <th className='px-6 py-4'>Sender</th>
-            <th className='px-6 py-4'>Receiver</th>
-            <th className='px-6 py-4'>Transactions Amount</th>
-            <th className='px-6 py-4'>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <TableRow name='Mark' sender='Otto' receiver='@mdo' amount='20000' />
-          <TableRow name='Mark' sender='Otto' receiver='@mdo' amount='20000' />
-          <TableRow name='Mark' sender='Otto' receiver='@mdo' amount='20000' />
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function TableRow({ name, sender, receiver, amount }: TableRowProps) {
-  return (
-    <tr className='border-b hover:bg-gray-100'>
-      <td className='px-6 py-4'>{name}</td>
-      <td className='px-6 py-4'>{sender}</td>
-      <td className='px-6 py-4'>{receiver}</td>
-      <td className='px-6 py-4'>{amount}</td>
-      <td className='px-6 py-4'>
-        <div className='space-x-4'>
-          <button className='btn-primary'>Edit</button>
-          <button className='btn-primary'>Delete</button>
-        </div>
-      </td>
-    </tr>
   );
 }

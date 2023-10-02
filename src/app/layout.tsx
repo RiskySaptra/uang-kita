@@ -1,5 +1,8 @@
+'use client';
+
 import { Metadata } from 'next';
 import * as React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import '@/styles/globals.css';
 
@@ -48,14 +51,18 @@ export const metadata: Metadata = {
   // ],
 };
 
+const queryClient = new QueryClient();
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html>
-      <body>{children}</body>
+    <html className='bg-slate-900'>
+      <QueryClientProvider client={queryClient}>
+        <body>{children}</body>
+      </QueryClientProvider>
     </html>
   );
 }
