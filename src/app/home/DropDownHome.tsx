@@ -3,10 +3,9 @@ import React, { useState } from 'react';
 
 interface Props {
   item: any;
-  index: number;
 }
 
-const DropDownHome: React.FC<Props> = ({ item, index }) => {
+const DropDownHome: React.FC<Props> = ({ item }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<any>({
     isOpen: false,
     id: null,
@@ -24,9 +23,8 @@ const DropDownHome: React.FC<Props> = ({ item, index }) => {
   };
   return (
     <div
-      className='flex cursor-pointer items-center justify-center rounded bg-gray-50 p-5 dark:bg-gray-800'
+      className='flex cursor-pointer items-center justify-center rounded bg-gray-800'
       onClick={() => openDropdown(item._id)}
-      key={index}
     >
       <div>
         <p className='dark:text-white-500 text-2xl text-white'>{item.title}</p>

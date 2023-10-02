@@ -34,7 +34,7 @@ export default function page() {
       <div className="h-screen bg-[url('/images/UANGKITA.png')] bg-auto bg-center p-4">
         <div className='grid min-h-[11rem] grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4'>
           {dataCard.map((item, index) => {
-            return <DropDownHome item={item} index={index} />;
+            return <DropDownHome item={item} key={index} />;
           })}
         </div>
 

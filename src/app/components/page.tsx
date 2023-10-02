@@ -80,11 +80,11 @@ export default function ComponentPage() {
                   )}
                   onChange={(e) => setColor(e.target.value as Color)}
                 >
-                  {colorList.map((c) => (
+                  {/* {colorList.map((c) => (
                     <option key={c} value={c}>
                       {c}
                     </option>
-                  ))}
+                  ))} */}
                 </select>
                 <ButtonLink href='https://github.com/theodorusclarence/ts-nextjs-tailwind-starter/blob/main/src/styles/colors.css'>
                   Check list of colors
