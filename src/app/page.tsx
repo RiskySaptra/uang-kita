@@ -24,9 +24,7 @@ interface TotalDebtProps {
 
 const getDataBalanceAmount = async () => {
   try {
-    const data = await fetch(
-      `https://uang-kita.vercel.app/api/total-balance-amount`
-    );
+    const data = await fetch(`http://localhost:3000/api/total-balance-amount`);
     return data.json();
   } catch (error) {
     // console.log(error);
@@ -34,7 +32,7 @@ const getDataBalanceAmount = async () => {
 };
 const getDataTotalDebt = async () => {
   try {
-    const data = await fetch(`https://uang-kita.vercel.app/api/house-debt`);
+    const data = await fetch(`http://localhost:3000/api/house-debt`);
     return data.json();
   } catch (error) {
     // console.log(error);

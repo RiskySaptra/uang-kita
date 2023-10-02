@@ -22,9 +22,7 @@ interface Transaction {
 
 const getDataTable = async () => {
   try {
-    const data = await fetch(
-      `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/transactions-list`
-    );
+    const data = await fetch(`http://localhost:3000/api/transactions-list`);
     return data.json();
   } catch (error) {
     // console.log(error);
