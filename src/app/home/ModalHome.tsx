@@ -4,7 +4,7 @@ import InputForm from '@/app/components/input';
 import Modal from '@/app/components/modal';
 import SelectForm from '@/app/components/select';
 
-interface DataItem {
+export interface DataItem {
   id: number;
   name: string;
 }
