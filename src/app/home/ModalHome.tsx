@@ -1,10 +1,15 @@
-'use client';
-import InputForm from '@/app/components/input';
-import Modal from '@/app/components/modal';
-import SelectForm, { Selectdata } from '@/app/components/select';
 import React, { useState } from 'react';
 
-const data = [
+import InputForm from '@/app/components/input';
+import Modal from '@/app/components/modal';
+import SelectForm from '@/app/components/select';
+
+interface DataItem {
+  id: number;
+  name: string;
+}
+
+const data: DataItem[] = [
   {
     id: 1,
     name: 'Risky',
@@ -31,7 +36,14 @@ const data = [
   },
 ];
 
-const initPayload = {
+interface Payload {
+  transactionName: string;
+  sender: number;
+  receiver: number;
+  amount: number;
+}
+
+const initPayload: Payload = {
   transactionName: 'Galon',
   sender: 2,
   receiver: -1,
@@ -40,7 +52,7 @@ const initPayload = {
 
 export default function ModalHome() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [payload, setPayload] = useState<any>(initPayload);
+  const [payload, setPayload] = useState<Payload>(initPayload);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -50,8 +62,8 @@ export default function ModalHome() {
     setIsModalOpen(false);
   };
 
-  const processPayload = (selected: any, field: any) => {
-    const conditionCallback = (item: any) => {
+  const processPayload = (selected: number, field: string) => {
+    const conditionCallback = (item: DataItem) => {
       if (field === 'sender') {
         if (item.id === -2) return false;
       } else {
@@ -68,12 +80,13 @@ export default function ModalHome() {
     return data.filter(conditionCallback);
   };
 
-  console.log(payload);
-
-  const handleSelect = (e: any) => {
+  const handleSelect = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+    field: string
+  ) => {
     setPayload({
       ...payload,
-      [e.target.id]: Number(e.target.value),
+      [field]: Number(e.target.value),
     });
   };
 
@@ -99,7 +112,7 @@ export default function ModalHome() {
               <InputForm
                 title='Berita Transaksi'
                 type='text'
-                id='name'
+                id='transactionName'
                 placeholder='Masukkan nama barang yang dibeli'
               />
             </div>
@@ -109,7 +122,7 @@ export default function ModalHome() {
                 id='sender'
                 value={payload.sender}
                 data={processPayload(payload.sender, 'sender')}
-                onChange={handleSelect} // this is not working
+                onChange={(e) => handleSelect(e, 'sender')}
               />
             </div>
             <div>
@@ -118,7 +131,7 @@ export default function ModalHome() {
                 id='receiver'
                 value={payload.receiver}
                 data={processPayload(payload.sender, 'receiver')}
-                onChange={handleSelect} // this is not working
+                onChange={(e) => handleSelect(e, 'receiver')}
               />
             </div>
             <div>
