@@ -23,7 +23,7 @@ interface Transaction {
 const getDataTable = async () => {
   try {
     const data = await fetch(
-      `https://uang-kita-dyqqxu4c9-riskysaptra.vercel.app/api/transactions-list`
+      `https://uang-kita.vercel.app/api/transactions-list`
     );
     return data.json();
   } catch (error) {
