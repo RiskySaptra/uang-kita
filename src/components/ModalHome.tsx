@@ -6,6 +6,8 @@ import * as yup from 'yup';
 import InputForm from '@/components/Input';
 import Modal from '@/components/Modal';
 import SelectForm from '@/components/Select';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 export interface DataItem {
   id: number;
@@ -56,20 +58,16 @@ const initPayload: Payload = {
 const _baseUrl = process.env.BASE_URL;
 
 const addNewTransaction = async (payload: Payload) => {
-  try {
-    const data = await fetch(`${_baseUrl}api/add-transaction`, {
-      method: 'POST',
+  const { data: response } = await axios.post(
+    `${_baseUrl}api/add-transaction`,
+    payload,
+    {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload),
-      cache: 'no-store',
-      next: { revalidate: 0 },
-    });
-    return data.json();
-  } catch (error) {
-    // console.log(error);
-  }
+    }
+  );
+  return response.data;
 };
 
 export default function ModalHome() {
@@ -79,8 +77,12 @@ export default function ModalHome() {
   const [isPayContribution, setIsPayContribution] = useState(false);
   const mutation = useMutation({
     mutationFn: addNewTransaction,
-    onSuccess: async () => {
+    onSuccess: async (data: any) => {
       await queryClient.refetchQueries();
+      toast(data.message);
+    },
+    onError: (error: any) => {
+      toast(error.response.data.error);
     },
   });
 
@@ -130,7 +132,7 @@ export default function ModalHome() {
 
   const formik = useFormik({
     initialValues: initPayload,
-    validationSchema: validationSchema,
+    // validationSchema: validationSchema,
     onSubmit: async (values: Payload) => {
       mutation.mutate(values);
       resetForm();

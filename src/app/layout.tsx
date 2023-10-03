@@ -2,6 +2,8 @@
 import * as React from 'react';
 import '@/styles/globals.css';
 import { QueryClientProvider, QueryClient } from 'react-query';
+import 'react-toastify/dist/ReactToastify.css';
+import ToastProvider from '@/components/ToastProvider';
 
 // // !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
 // // import '@/styles/colors.css';
@@ -58,7 +60,9 @@ export default function RootLayout({
   return (
     <html className='bg-slate-900'>
       <QueryClientProvider client={queryClient}>
-        <body>{children}</body>
+        <body>
+          <ToastProvider>{children}</ToastProvider>
+        </body>
       </QueryClientProvider>
     </html>
   );
