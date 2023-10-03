@@ -26,11 +26,11 @@ export async function POST(req: NextRequest) {
       if (amount > result[0].difference) {
         return NextResponse.json(
           {
-            error: `You have attempted to make a payment that exceeds the debt (Actual debt: ${formatCurrency(
+            error: `You have attempted to make a payment that exceeds the debt! (Actual debt: ${formatCurrency(
               result[0].difference
-            )} Amount paid: ${formatCurrency(amount)} )`,
+            )} Amount paid: ${formatCurrency(amount)})`,
           },
-          { status: 500 }
+          { status: 400 }
         );
       }
     }
