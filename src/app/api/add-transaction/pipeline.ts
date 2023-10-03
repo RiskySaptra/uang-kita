@@ -41,7 +41,15 @@ export const _findTotalDebt = (user_id: number) => [
           else: '$receiverPipeline',
         },
       },
-      senderPipeline: 1,
+      senderPipeline: {
+        $cond: {
+          if: {
+            $eq: [{ $size: '$senderPipeline' }, 0],
+          },
+          then: [{ _id: user_id, settled_debt: 0 }], // Dummy object
+          else: '$senderPipeline',
+        },
+      },
     },
   },
   {
@@ -54,8 +62,8 @@ export const _findTotalDebt = (user_id: number) => [
     $project: {
       difference: {
         $subtract: [
-          '$senderPipeline.total_debt',
-          '$receiverPipeline.settled_debt',
+          { $ifNull: ['$senderPipeline.total_debt', 0] },
+          { $ifNull: ['$receiverPipeline.settled_debt', 0] },
         ],
       },
     },

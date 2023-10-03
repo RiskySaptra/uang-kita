@@ -4,6 +4,7 @@ import { connectToDatabase } from '@/lib/mongoDb-utils';
 import { formatCurrency } from '@/lib/utils';
 
 import { _findTotalDebt } from '@/app/api/add-transaction/pipeline';
+import { _totalBalanceAmount } from '@/app/api/total-balance-amount/pipeline';
 
 export async function POST(req: NextRequest) {
   const { transactionName, sender, receiver, amount } = await req.json();
@@ -19,30 +20,46 @@ export async function POST(req: NextRequest) {
 
   try {
     const { db } = await connectToDatabase();
-    if (sender === -1 && receiver > 0) {
-      const result = await db
-        .collection('transactions')
-        .aggregate(_findTotalDebt(1))
-        .toArray();
 
-      if (amount > result[0].difference) {
-        const debt = result[0].difference <= 0 ? 0 : result[0].difference;
+    if (sender === -1) {
+      const total_balance = await db
+        .collection('transactions')
+        .aggregate(_totalBalanceAmount)
+        .toArray();
+      if (amount > total_balance[0].total_balance) {
         return NextResponse.json(
           {
-            error: `You have attempted to make a payment that exceeds the debt! 
-            (Actual debt: ${formatCurrency(debt)} Amount paid: 
-            ${formatCurrency(amount)})`,
+            error: `saldo tidak cukup silahkan mencopet dulu`,
           },
           { status: 400 }
         );
       }
+      if (receiver > 0) {
+        const result = await db
+          .collection('transactions')
+          .aggregate(_findTotalDebt(receiver))
+          .toArray();
+
+        if (amount > result[0].difference || result[0].difference === 0) {
+          const debt = result[0].difference <= 0 ? 0 : result[0].difference;
+          return NextResponse.json(
+            {
+              error: `You have attempted to make a payment that exceeds the debt! (Actual debt: ${formatCurrency(
+                debt
+              )} Amount paid: ${formatCurrency(amount)})`,
+            },
+            { status: 400 }
+          );
+        }
+      }
     }
-    const result = await db.collection('transactions').insertOne(transasction);
-    if (result) {
-      return NextResponse.json(result);
-    } else {
-      return NextResponse.json({ error: 'Data not found' });
-    }
+
+    // const result = await db.collection('transactions').insertOne(transasction);
+    // if (result) {
+    //   return NextResponse.json(result);
+    // } else {
+    //   return NextResponse.json({ error: 'Data not found' });
+    // }
   } catch (error) {
     return NextResponse.json({ error: 'An error occurred' });
   }
