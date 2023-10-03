@@ -131,6 +131,7 @@ export default function ModalHome() {
     mutation.mutate(payload);
     setPayload(initPayload);
     setIsModalOpen(false);
+    setIsPayContribution(false);
     event.preventDefault();
   };
 

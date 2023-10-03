@@ -10,7 +10,7 @@ export const _findTotalDebt = (user_id: number) => [
         },
         {
           $group: {
-            _id: null,
+            _id: '$tx_sender',
             total_debt: { $sum: '$tx_amount' },
           },
         },
@@ -23,7 +23,7 @@ export const _findTotalDebt = (user_id: number) => [
         },
         {
           $group: {
-            _id: null,
+            _id: '$tx_reciver',
             settled_debt: { $sum: '$tx_amount' },
           },
         },
@@ -32,14 +32,30 @@ export const _findTotalDebt = (user_id: number) => [
   },
   {
     $project: {
+      receiverPipeline: {
+        $cond: {
+          if: {
+            $eq: [{ $size: '$receiverPipeline' }, 0],
+          },
+          then: [{ _id: user_id, settled_debt: 0 }], // Dummy object
+          else: '$receiverPipeline',
+        },
+      },
+      senderPipeline: 1,
+    },
+  },
+  {
+    $unwind: '$receiverPipeline',
+  },
+  {
+    $unwind: '$senderPipeline',
+  },
+  {
+    $project: {
       difference: {
         $subtract: [
-          {
-            $arrayElemAt: ['$senderPipeline.total_debt', 0],
-          },
-          {
-            $arrayElemAt: ['$receiverPipeline.settled_debt', 0],
-          },
+          '$senderPipeline.total_debt',
+          '$receiverPipeline.settled_debt',
         ],
       },
     },
