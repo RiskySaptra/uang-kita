@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 
-import InputForm from '@/app/components/input';
-import Modal from '@/app/components/modal';
-import SelectForm from '@/app/components/select';
+import InputForm from '@/components/Input';
+import Modal from '@/components/Modal';
+import SelectForm from '@/components/Select';
 
 export interface DataItem {
   id: number;
@@ -44,15 +45,58 @@ interface Payload {
 }
 
 const initPayload: Payload = {
-  transactionName: 'Galon',
-  sender: 2,
-  receiver: -1,
-  amount: 10000,
+  transactionName: '',
+  sender: 0,
+  receiver: 0,
+  amount: 0,
+};
+
+const processPayload = (selected: number, field: string) => {
+  const conditionCallback = (item: DataItem) => {
+    if (field === 'sender') {
+      if (item.id === -2) return false;
+    } else {
+      if (selected < 0) {
+        if (item.id === -2) return true;
+        return item.id > 0;
+      } else {
+        return item.id < 0;
+      }
+    }
+    return true;
+  };
+
+  return data.filter(conditionCallback);
+};
+
+const _baseUrl = process.env.BASE_URL;
+
+const addNewTransaction = async (payload: Payload) => {
+  try {
+    const data = await fetch(`${_baseUrl}api/add-transaction`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    return data.json();
+  } catch (error) {
+    // console.log(error);
+  }
 };
 
 export default function ModalHome() {
+  const queryClient = useQueryClient();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [payload, setPayload] = useState<Payload>(initPayload);
+  const mutation = useMutation({
+    mutationFn: addNewTransaction,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries();
+    },
+  });
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -60,24 +104,6 @@ export default function ModalHome() {
 
   const closeModal = () => {
     setIsModalOpen(false);
-  };
-
-  const processPayload = (selected: number, field: string) => {
-    const conditionCallback = (item: DataItem) => {
-      if (field === 'sender') {
-        if (item.id === -2) return false;
-      } else {
-        if (selected < 0) {
-          if (item.id === -2) return true;
-          return item.id > 0;
-        } else {
-          return item.id < 0;
-        }
-      }
-      return true;
-    };
-
-    return data.filter(conditionCallback);
   };
 
   const handleSelect = (
@@ -90,12 +116,26 @@ export default function ModalHome() {
     });
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPayload({
+      ...payload,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (event: React.SyntheticEvent) => {
+    mutation.mutate(payload);
+    setPayload(initPayload);
+    setIsModalOpen(false);
+    event.preventDefault();
+  };
+
   return (
     <React.Fragment>
       <div className='mt-5 flex justify-between'>
         <button
           onClick={openModal}
-          className='focus:shadow-outline inline-flex h-10 items-center justify-center rounded-lg bg-gray-500 px-6 font-medium tracking-wide text-white transition duration-200 hover:bg-gray-600 focus:outline-none'
+          className='focus:shadow-outline inline-flex h-10 items-center justify-center rounded-lg bg-blue-900 px-6 font-medium tracking-wide text-white transition duration-200 hover:bg-blue-800 focus:outline-none'
         >
           Add New Transaction
         </button>
@@ -107,13 +147,15 @@ export default function ModalHome() {
             <h1 className='text-xl font-bold'>Pencatatan Dimulai</h1>
           </div>
 
-          <form>
+          <form onSubmit={handleSubmit}>
             <div>
               <InputForm
                 title='Berita Transaksi'
                 type='text'
+                value={payload.transactionName}
                 id='transactionName'
-                placeholder='Masukkan nama barang yang dibeli'
+                placeholder='Masukkan nama transaksi'
+                onChange={(e) => handleChange(e)}
               />
             </div>
             <div>
@@ -137,9 +179,11 @@ export default function ModalHome() {
             <div>
               <InputForm
                 title='Jumlah'
-                type='number'
+                type='text'
+                value={payload.amount}
                 id='amount'
                 placeholder='Masukkan jumlah uang'
+                onChange={(e) => handleChange(e)}
               />
             </div>
             <button

@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     tx_name: transactionName,
     tx_sender: sender,
     tx_reciver: receiver,
-    tx_amount: amount,
+    tx_amount: Number(amount),
     tx_date: new Date(),
   };
 

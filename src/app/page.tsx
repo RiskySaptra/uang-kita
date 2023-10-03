@@ -5,18 +5,15 @@ import { useQuery } from 'react-query';
 
 import { formatCurrency } from '@/lib/utils';
 
-import Table from '@/app/components/table';
-import ModalHome from '@/app/home/ModalHome';
+import Card from '@/components/Card';
+import Table from '@/components/Table';
 
-interface CardProps {
-  title: string;
-  amount: string;
-}
+import ModalHome from '@/app/home/ModalHome';
 
 interface BalanceAmountProps {
   total_balance: number;
 }
-interface TotalDebtProps {
+export interface TotalDebtProps {
   user_id: number;
   name: string;
   total_debt: number;
@@ -81,7 +78,11 @@ export default function HomePage() {
             balanceAmount ? Number(balanceAmount.total_balance) : 0
           )}
         />
-        <Card title='Total Debt' amount={formatCurrency(sumDebt(totalDebt))} />
+        <Card
+          title='Total Debt'
+          amount={formatCurrency(sumDebt(totalDebt))}
+          data={totalDebt}
+        />
         <Card title='contribution' amount={formatCurrency(0)} />
         <Card title='Total Expenses' amount={formatCurrency(0)} />
       </div>
@@ -89,14 +90,5 @@ export default function HomePage() {
       <ModalHome />
       <Table />
     </main>
-  );
-}
-
-function Card({ title, amount }: CardProps) {
-  return (
-    <div className='min-h-[8rem] rounded-lg bg-white p-4'>
-      <p className='font-semibold uppercase'>{title}</p>
-      <p className='text-xl font-bold'>{amount}</p>
-    </div>
   );
 }

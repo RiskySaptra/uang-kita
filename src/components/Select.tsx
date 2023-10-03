@@ -24,16 +24,19 @@ const SelectForm: React.FC<SelectProps> = ({
 }) => {
   return (
     <div className='mb-2'>
-      <label className='mb-2 block text-sm font-medium text-gray-900'>
+      <label
+        htmlFor={id}
+        className='mb-2 block text-sm font-medium text-gray-900'
+      >
         {title}
       </label>
       <select
         id={id}
-        defaultValue={value}
+        value={value}
         onChange={onChange}
         className='block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-gray-500 focus:ring-gray-500 '
       >
-        <option selected>Choose</option>
+        <option value=''>Choose</option>
         {data.map((item: DataItem) => (
           <option key={item.id} value={item.id}>
             {item.name}

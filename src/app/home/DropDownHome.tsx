@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import Dropdown from '@/app/components/dropdown';
+import Dropdown from '@/components/Dropdown';
 
 interface Props {
   item: any;

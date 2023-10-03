@@ -41,43 +41,43 @@ export default function Table() {
     <div className='mt-5 flex flex-col'>
       <div className='-m-1.5 overflow-x-auto'>
         <div className='inline-block min-w-full p-1.5 align-middle'>
-          <div className='overflow-hidden rounded-lg border bg-white'>
-            <table className='min-w-full divide-y divide-gray-200'>
+          <div className='overflow-hidden rounded-lg border bg-gray-200'>
+            <table className='min-w-full divide-y divide-gray-500'>
               <thead>
                 <tr>
                   <th
                     scope='col'
-                    className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-500'
+                    className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-700'
                   >
                     Berita Transaksi
                   </th>
                   <th
                     scope='col'
-                    className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-500'
+                    className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-700'
                   >
                     Tanggal
                   </th>
                   <th
                     scope='col'
-                    className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-500'
+                    className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-700'
                   >
                     Pengirim
                   </th>
                   <th
                     scope='col'
-                    className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-500'
+                    className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-700'
                   >
                     Penerima
                   </th>
                   <th
                     scope='col'
-                    className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-500'
+                    className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-700'
                   >
                     Jumlah
                   </th>
                 </tr>
               </thead>
-              <tbody className='divide-y divide-gray-200 '>
+              <tbody className='divide-y divide-gray-400 '>
                 {data ? (
                   data.map((item: Transaction) => (
                     <TableRow
