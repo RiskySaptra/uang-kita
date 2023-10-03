@@ -1,5 +1,6 @@
-import Dropdown from '@/app/components/dropdown';
 import React, { useState } from 'react';
+
+import Dropdown from '@/components/Dropdown';
 
 interface Props {
   item: any;
@@ -21,16 +22,20 @@ const DropDownHome: React.FC<Props> = ({ item }) => {
   const closeDropdown = (id: any) => {
     setIsDropdownOpen({ isOpen: false, id: id });
   };
+
   return (
     <div
-      className='flex cursor-pointer items-center justify-center rounded bg-gray-800'
+      className='flex cursor-pointer rounded bg-gray-800 p-3 text-white'
       onClick={() => openDropdown(item._id)}
     >
-      <div>
-        <p className='dark:text-white-500 text-2xl text-white'>{item.title}</p>
-        <div className='flex items-center justify-center text-white'>
-          {item.amount}
-        </div>
+      <div className='w-full'>
+        {!isDropdownOpen.isOpen && (
+          <div>
+            <p className='font-medium'>{item.title}</p>
+            <p className='text-xl font-semibold'>{item.amount}</p>
+          </div>
+        )}
+
         <Dropdown
           isOpen={isDropdownOpen.isOpen && isDropdownOpen.id === item._id}
           onClose={() => closeDropdown}
@@ -44,18 +49,11 @@ const DropDownHome: React.FC<Props> = ({ item }) => {
             <div>Kevin</div>
           </div>
           <div>
-            <div>Bulan Lalu</div>
-            <div>Rp.69</div>
-            <div>Rp.69</div>
-            <div>Rp.69</div>
-            <div>Rp.69</div>
-          </div>
-          <div>
             <div>Bulan Ini</div>
-            <div>Rp.69</div>
-            <div>Rp.69</div>
-            <div>Rp.69</div>
-            <div>Rp.69</div>
+            <div>Rp.200,000</div>
+            <div>Rp.200,000</div>
+            <div>Rp.200,000</div>
+            <div>Rp.200,000</div>
           </div>
           <div>
             <div>Total</div>

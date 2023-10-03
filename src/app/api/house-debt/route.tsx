@@ -1,19 +1,20 @@
 import { NextResponse } from 'next/server';
 
-import { clientPromise } from '@/lib/mongoDb-utils';
+import { connectToDatabase } from '@/lib/mongoDb-utils';
 
 import { _settledAndDebtSummary } from '@/app/api/house-debt/pipeline';
-import { processDebtData } from '@/app/api/house-debt/utils';
+import { InputData, processDebtData } from '@/app/api/house-debt/utils';
 
 export async function GET() {
   try {
-    const client = await clientPromise('uangkita-test', 'transactions');
-    const result: any = await client
+    const { db } = await connectToDatabase();
+    const result = await db
+      .collection('transactions')
       .aggregate(_settledAndDebtSummary)
       .toArray();
-    if (result) {
-      const parseData = processDebtData(result[0]);
-      return NextResponse.json(parseData);
+    if (result && result.length > 0) {
+      const data = result as InputData[];
+      return NextResponse.json(processDebtData(data));
     } else {
       return NextResponse.json({ error: 'Data not found' });
     }
@@ -21,3 +22,5 @@ export async function GET() {
     return NextResponse.json({ error: 'An error occurred' });
   }
 }
+
+export const dynamic = 'force-dynamic';

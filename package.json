@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "eslint src --fix && yarn format",
+    "lint:fix": "eslint src --fix",
     "lint:strict": "eslint --max-warnings=0 src",
     "typecheck": "tsc --noEmit --incremental false",
     "test:watch": "jest --watch",
@@ -19,12 +19,14 @@
   "dependencies": {
     "@tanstack/react-query": "^4.35.7",
     "clsx": "^1.2.1",
+    "dayjs": "^1.11.10",
     "lucide-react": "^0.260.0",
     "mongodb": "^6.1.0",
     "next": "^13.4.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",
+    "react-query": "^3.39.3",
     "tailwind-merge": "^1.13.2"
   },
   "devDependencies": {

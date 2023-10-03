@@ -12,10 +12,8 @@ const Dropdown: React.FC<DropdownProps> = ({ isOpen, isId, children }) => {
 
   return (
     <>
-      <div className='mt-3 flex flex-col '>
-        {isOpen && (
-          <div className='flex justify-between text-white'>{children}</div>
-        )}
+      <div className=''>
+        {isOpen && <div className='grid grid-cols-3 gap-4'>{children}</div>}
       </div>
     </>
   );

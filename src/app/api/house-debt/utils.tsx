@@ -15,13 +15,13 @@ interface Result {
   total_debt: number;
 }
 
-interface InputData {
+export interface InputData {
   debtSummary: DebtSummary[];
   settledDebtSummary: SettledDebtSummary[];
 }
 
-export function processDebtData(inputData: InputData): Result[] {
-  const { debtSummary, settledDebtSummary } = inputData;
+export function processDebtData(inputData: InputData[]): Result[] {
+  const { debtSummary, settledDebtSummary } = inputData[0];
 
   const settledDebtMap: { [key: number]: number } = {};
 

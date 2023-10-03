@@ -21,8 +21,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         className='absolute z-[-1] h-screen w-screen'
         onClick={handleOverlayClick}
       />
-      <div className='min-w-96 relative rounded-lg bg-white shadow-md'>
-        <button className='absolute right-3 text-3xl' onClick={onClose}>
+      <div className='relative min-w-[300px] rounded-lg bg-white shadow-md'>
+        <button className='absolute right-4 top-1 text-3xl' onClick={onClose}>
           &times;
         </button>
         <div className='p-8'>{children}</div>

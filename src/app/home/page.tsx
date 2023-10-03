@@ -1,10 +1,10 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
+import DropDownHome from '@/app/home/DropDownHome';
 import ModalHome from '@/app/home/ModalHome';
 import TableHome from '@/app/home/TableHome';
-import DropDownHome from '@/app/home/DropDownHome';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from 'react-query';
 
 const dataCard = [
   {
