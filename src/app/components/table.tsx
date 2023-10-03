@@ -22,7 +22,7 @@ interface Transaction {
 
 const getDataTable = async () => {
   try {
-    const data = await fetch(`http://localhost:3000/api/transactions-list`);
+    const data = await fetch(`http://192.168.0.100:3000/api/transactions-list`);
     return data.json();
   } catch (error) {
     // console.log(error);
