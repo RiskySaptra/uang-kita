@@ -30,6 +30,8 @@ const getDataTable = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
+      cache: 'no-store',
+      next: { revalidate: 0 },
     });
     return data.json();
   } catch (error) {

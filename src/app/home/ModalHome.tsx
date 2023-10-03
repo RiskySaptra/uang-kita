@@ -79,6 +79,8 @@ const addNewTransaction = async (payload: Payload) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
+      cache: 'no-store',
+      next: { revalidate: 0 },
     });
     return data.json();
   } catch (error) {

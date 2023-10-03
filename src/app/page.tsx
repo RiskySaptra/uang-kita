@@ -30,6 +30,8 @@ const getDataBalanceAmount = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
+      cache: 'no-store',
+      next: { revalidate: 0 },
     });
     return data.json();
   } catch (error) {
@@ -43,6 +45,8 @@ const getDataTotalDebt = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
+      cache: 'no-store',
+      next: { revalidate: 0 },
     });
     return data.json();
   } catch (error) {
