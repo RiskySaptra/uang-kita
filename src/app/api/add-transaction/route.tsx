@@ -25,3 +25,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'An error occurred' });
   }
 }
+
+export const dynamic = 'force-dynamic';
