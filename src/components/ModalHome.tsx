@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from 'react-query';
 import InputForm from '@/components/Input';
 import Modal from '@/components/Modal';
 import SelectForm from '@/components/Select';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 
 export interface DataItem {
   id: number;
@@ -91,47 +93,15 @@ export default function ModalHome() {
     setIsModalOpen(false);
   };
 
-  // console.log(payContribution, 'test');
-
-  const handleSelect = (
-    e: React.ChangeEvent<HTMLSelectElement>,
-    field: string
-  ) => {
-    setPayload({
-      ...payload,
-      [field]: Number(e.target.value),
-    });
-  };
-
   const handlePayContribution = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsPayContribution(e.target.checked);
     if (e.target.checked) {
-      setPayload({
-        ...payload,
-        transactionName: 'Bayar Iuran Rumah',
-        receiver: -1,
-      });
+      formik.setFieldValue('transactionName', 'Bayar Iuran Rumah');
+      formik.setFieldValue('receiver', Number(-1));
     } else {
-      setPayload({
-        ...payload,
-        transactionName: '',
-        receiver: 0,
-      });
+      formik.setFieldValue('transactionName', '');
+      formik.setFieldValue('receiver', Number(0));
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPayload({
-      ...payload,
-      [e.target.id]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (event: React.SyntheticEvent) => {
-    mutation.mutate(payload);
-    setPayload(initPayload);
-    setIsModalOpen(false);
-    event.preventDefault();
   };
 
   const processPayload = (selected: number, field: string) => {
@@ -153,6 +123,35 @@ export default function ModalHome() {
     return data.filter(conditionCallback);
   };
 
+  // sender dan receiver tidak boleh nol
+  // transactionName tidak boleh kosong
+  // amount tidak boleh kosong dan lebih dari 0
+
+  const validationSchema = yup.object({
+    transactionName: yup.string().required('Nama transaksi harus diisi'),
+    sender: yup.number().required('Pengirim harus diisi'),
+    receiver: yup.number().required('Penerima harus diisi'),
+    amount: yup.number().required('Jumlah uang harus diisi'),
+  });
+
+  const formik = useFormik({
+    initialValues: payload,
+    validationSchema: validationSchema,
+    onSubmit: async (values, actions) => {
+      mutation.mutate(values);
+      resetForm();
+      setIsModalOpen(false);
+      setIsPayContribution(false);
+      console.log(values, 'values');
+    },
+  });
+
+  const resetForm = () => {
+    formik.resetForm({
+      values: initPayload,
+    });
+  };
+
   return (
     <React.Fragment>
       <div className='mt-5 flex justify-between'>
@@ -170,16 +169,17 @@ export default function ModalHome() {
             <h1 className='text-xl font-bold'>Pencatatan Dimulai</h1>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={formik.handleSubmit}>
             <div>
               <InputForm
                 title='Berita Transaksi'
                 type='text'
-                value={payload.transactionName}
+                value={formik.values.transactionName}
                 isDisabled={isPayContribution}
                 id='transactionName'
                 placeholder='Masukkan nama transaksi'
-                onChange={handleChange}
+                onChange={formik.handleChange}
+                err={formik?.errors?.transactionName}
               />
             </div>
             <div className='mb-2'>
@@ -207,9 +207,12 @@ export default function ModalHome() {
               <SelectForm
                 title='Pengirim'
                 id='sender'
-                value={payload.sender}
-                data={processPayload(payload.sender, 'sender')}
-                onChange={(e) => handleSelect(e, 'sender')}
+                value={formik.values.sender}
+                data={processPayload(formik.values.sender, 'sender')}
+                onChange={(e) =>
+                  formik.setFieldValue('sender', Number(e.target.value))
+                }
+                err={formik?.errors?.sender}
               />
             </div>
             <div>
@@ -217,19 +220,23 @@ export default function ModalHome() {
                 title='Penerima'
                 id='receiver'
                 isDisabled={isPayContribution}
-                value={payload.receiver}
-                data={processPayload(payload.sender, 'receiver')}
-                onChange={(e) => handleSelect(e, 'receiver')}
+                value={formik.values.receiver}
+                data={processPayload(formik.values.sender, 'receiver')}
+                onChange={(e) =>
+                  formik.setFieldValue('receiver', Number(e.target.value))
+                }
+                err={formik?.errors?.receiver}
               />
             </div>
             <div>
               <InputForm
                 title='Jumlah'
                 type='text'
-                value={payload.amount}
+                value={formik.values.amount}
                 id='amount'
                 placeholder='Masukkan jumlah uang'
-                onChange={handleChange}
+                onChange={formik.handleChange}
+                err={formik?.errors?.amount}
               />
             </div>
             <button

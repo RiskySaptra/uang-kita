@@ -7,6 +7,7 @@ interface InputProps {
   placeholder: string;
   value: string | number;
   isDisabled?: boolean;
+  err: string | undefined;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -18,6 +19,7 @@ const InputForm: React.FC<InputProps> = ({
   value,
   onChange,
   isDisabled,
+  err,
 }) => {
   return (
     <div className='mb-2 w-full'>
@@ -34,6 +36,9 @@ const InputForm: React.FC<InputProps> = ({
         placeholder={placeholder}
         required
       />
+      <label className='mt-2 block text-sm font-medium text-red-600 '>
+        {err}
+      </label>
     </div>
   );
 };

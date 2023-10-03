@@ -13,6 +13,7 @@ export interface SelectProps {
   id: string;
   data: DataItem[];
   isDisabled?: boolean;
+  err: string | undefined;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
@@ -23,6 +24,7 @@ const SelectForm: React.FC<SelectProps> = ({
   data,
   onChange,
   isDisabled,
+  err,
 }) => {
   return (
     <div className='mb-2'>
@@ -46,6 +48,9 @@ const SelectForm: React.FC<SelectProps> = ({
           </option>
         ))}
       </select>
+      <label className='mt-2 block text-sm font-medium text-red-600 '>
+        {err}
+      </label>
     </div>
   );
 };
