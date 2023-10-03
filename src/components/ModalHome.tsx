@@ -1,11 +1,11 @@
+import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
+import * as yup from 'yup';
 
 import InputForm from '@/components/Input';
 import Modal from '@/components/Modal';
 import SelectForm from '@/components/Select';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
 
 export interface DataItem {
   id: number;
@@ -76,7 +76,6 @@ export default function ModalHome() {
   const queryClient = useQueryClient();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [payload, setPayload] = useState<Payload>(initPayload);
   const [isPayContribution, setIsPayContribution] = useState(false);
   const mutation = useMutation({
     mutationFn: addNewTransaction,
@@ -130,14 +129,13 @@ export default function ModalHome() {
   });
 
   const formik = useFormik({
-    initialValues: payload,
+    initialValues: initPayload,
     validationSchema: validationSchema,
-    onSubmit: async (values, actions) => {
+    onSubmit: async (values: Payload) => {
       mutation.mutate(values);
       resetForm();
       setIsModalOpen(false);
       setIsPayContribution(false);
-      console.log(values, 'values');
     },
   });
 
@@ -147,14 +145,15 @@ export default function ModalHome() {
     });
   };
 
-  const handlePayContribution = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePayContribution = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setIsPayContribution(e.target.checked);
     if (e.target.checked) {
-      formik.setFieldValue('transactionName', 'Bayar Iuran Rumah');
+      await formik.setFieldValue('transactionName', 'Bayar Iuran Rumah', false);
       formik.setFieldValue('receiver', Number(-1));
-      formik.validateField('transactionName');
     } else {
-      formik.setFieldValue('transactionName', '');
+      await formik.setFieldValue('transactionName', '');
       formik.setFieldValue('receiver', Number(0));
     }
   };
@@ -186,10 +185,10 @@ export default function ModalHome() {
                 id='transactionName'
                 placeholder='Masukkan nama transaksi'
                 onChange={formik.handleChange}
-                err={isPayContribution && formik?.errors?.transactionName}
+                err={formik?.errors?.transactionName}
               />
             </div>
-            <div className='mb-2'>
+            <div className='my-2'>
               <label
                 htmlFor='toogleA'
                 className='flex cursor-pointer items-center'

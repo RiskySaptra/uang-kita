@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
     tx_reciver: receiver,
     tx_amount: Number(amount),
     tx_date: new Date(),
+    created_by: 'asrool',
   };
 
   try {
@@ -25,11 +26,12 @@ export async function POST(req: NextRequest) {
         .toArray();
 
       if (amount > result[0].difference) {
+        const debt = result[0].difference <= 0 ? 0 : result[0].difference;
         return NextResponse.json(
           {
-            error: `You have attempted to make a payment that exceeds the debt! (Actual debt: ${formatCurrency(
-              result[0].difference
-            )} Amount paid: ${formatCurrency(amount)})`,
+            error: `You have attempted to make a payment that exceeds the debt! 
+            (Actual debt: ${formatCurrency(debt)} Amount paid: 
+            ${formatCurrency(amount)})`,
           },
           { status: 400 }
         );

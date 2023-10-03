@@ -13,7 +13,7 @@ export interface SelectProps {
   id: string;
   data: DataItem[];
   isDisabled?: boolean;
-  err: string | undefined;
+  err?: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
@@ -27,10 +27,10 @@ const SelectForm: React.FC<SelectProps> = ({
   err,
 }) => {
   return (
-    <div className='mb-2'>
+    <div className='mb-1'>
       <label
         htmlFor={id}
-        className='mb-2 block text-sm font-medium text-gray-900'
+        className='mb-1 block text-sm font-medium text-gray-900'
       >
         {title}
       </label>
@@ -48,7 +48,7 @@ const SelectForm: React.FC<SelectProps> = ({
           </option>
         ))}
       </select>
-      <label className='mt-2 block text-sm font-medium text-red-600 '>
+      <label className='mt-1 block text-sm font-medium text-red-600 '>
         {err}
       </label>
     </div>

@@ -28,6 +28,7 @@ export const _transactionList = [
       receiver: '$receiver.name',
       tx_amount: 1,
       tx_date: 1,
+      created_by: 1,
     },
   },
 ];
