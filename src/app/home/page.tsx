@@ -1,8 +1,9 @@
 'use client';
 import React from 'react';
 
+import ModalHome from '@/components/ModalHome';
+
 import DropDownHome from '@/app/home/DropDownHome';
-import ModalHome from '@/app/home/ModalHome';
 import TableHome from '@/app/home/TableHome';
 
 const dataCard = [
