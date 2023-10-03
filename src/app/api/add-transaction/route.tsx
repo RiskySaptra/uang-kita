@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { clientPromise } from '@/lib/mongoDb-utils';
+import { connectToDatabase } from '@/lib/mongoDb-utils';
 
 export async function POST(req: NextRequest) {
   const { transactionName, sender, receiver, amount } = await req.json();
@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
   };
 
   try {
-    const client = await clientPromise('uangkita-test', 'transactions');
-    const result = await client.insertOne(transasction);
+    const { db } = await connectToDatabase();
+    const result = await db.collection('transactions').insertOne(transasction);
     if (result) {
       return NextResponse.json(result);
     } else {

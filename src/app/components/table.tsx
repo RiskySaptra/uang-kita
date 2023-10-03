@@ -20,9 +20,15 @@ interface Transaction {
   tx_amount: string;
 }
 
+const _baseUrl = process.env.BASE_URL;
 const getDataTable = async () => {
   try {
-    const data = await fetch(`http://192.168.0.100:3000/api/transactions-list`);
+    const data = await fetch(`${_baseUrl}api/transactions-list`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     return data.json();
   } catch (error) {
     // console.log(error);
