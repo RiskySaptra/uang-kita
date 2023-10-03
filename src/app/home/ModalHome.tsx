@@ -94,7 +94,7 @@ export default function ModalHome() {
   const mutation = useMutation({
     mutationFn: addNewTransaction,
     onSuccess: async () => {
-      await queryClient.invalidateQueries();
+      await queryClient.refetchQueries();
     },
   });
 
