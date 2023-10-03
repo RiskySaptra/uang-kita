@@ -93,17 +93,6 @@ export default function ModalHome() {
     setIsModalOpen(false);
   };
 
-  const handlePayContribution = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsPayContribution(e.target.checked);
-    if (e.target.checked) {
-      formik.setFieldValue('transactionName', 'Bayar Iuran Rumah');
-      formik.setFieldValue('receiver', Number(-1));
-    } else {
-      formik.setFieldValue('transactionName', '');
-      formik.setFieldValue('receiver', Number(0));
-    }
-  };
-
   const processPayload = (selected: number, field: string) => {
     const conditionCallback = (item: DataItem) => {
       if (field === 'sender') {
@@ -129,8 +118,14 @@ export default function ModalHome() {
 
   const validationSchema = yup.object({
     transactionName: yup.string().required('Nama transaksi harus diisi'),
-    sender: yup.number().required('Pengirim harus diisi'),
-    receiver: yup.number().required('Penerima harus diisi'),
+    sender: yup
+      .number()
+      .notOneOf([0], 'Pilih pengirim')
+      .required('Pengirim harus diisi'),
+    receiver: yup
+      .number()
+      .notOneOf([0], 'Pilih penerima')
+      .required('Penerima harus diisi'),
     amount: yup.number().required('Jumlah uang harus diisi'),
   });
 
@@ -150,6 +145,18 @@ export default function ModalHome() {
     formik.resetForm({
       values: initPayload,
     });
+  };
+
+  const handlePayContribution = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsPayContribution(e.target.checked);
+    if (e.target.checked) {
+      formik.setFieldValue('transactionName', 'Bayar Iuran Rumah');
+      formik.setFieldValue('receiver', Number(-1));
+      formik.validateField('transactionName');
+    } else {
+      formik.setFieldValue('transactionName', '');
+      formik.setFieldValue('receiver', Number(0));
+    }
   };
 
   return (
@@ -179,7 +186,7 @@ export default function ModalHome() {
                 id='transactionName'
                 placeholder='Masukkan nama transaksi'
                 onChange={formik.handleChange}
-                err={formik?.errors?.transactionName}
+                err={isPayContribution && formik?.errors?.transactionName}
               />
             </div>
             <div className='mb-2'>
