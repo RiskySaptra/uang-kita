@@ -1,7 +1,9 @@
+'use client';
 import { Metadata } from 'next';
 import * as React from 'react';
 
 import '@/styles/globals.css';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 // !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
 // import '@/styles/colors.css';
@@ -9,6 +11,8 @@ import { siteConfig } from '@/constant/config';
 
 // !STARTERCONF Change these default meta
 // !STARTERCONF Look at @/constant/config to change them
+
+const queryClient = new QueryClient();
 export const metadata: Metadata = {
   title: {
     default: siteConfig.title,
@@ -55,7 +59,9 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body>{children}</body>
+      <QueryClientProvider client={queryClient}>
+        <body>{children}</body>
+      </QueryClientProvider>
     </html>
   );
 }

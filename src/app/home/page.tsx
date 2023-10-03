@@ -1,9 +1,10 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import ModalHome from '@/app/home/ModalHome';
 import TableHome from '@/app/home/TableHome';
 import DropDownHome from '@/app/home/DropDownHome';
+import { useQuery } from '@tanstack/react-query';
 
 const dataCard = [
   {
@@ -13,7 +14,7 @@ const dataCard = [
   },
   {
     _id: 2,
-    title: 'TOTAL UTANG RUMAH KE USER',
+    title: 'TOTAL UTANG RUMAH KE USER, cuma ini yang ada detailnya',
     amount: 'Rp.0',
   },
   {
@@ -29,6 +30,18 @@ const dataCard = [
 ];
 
 export default function page() {
+  const fetchData = async () => {
+    const res = await fetch('http://localhost:3000/api/house-debt');
+    return await res.json();
+  };
+
+  const { data, error, isLoading } = useQuery(['houseDebt'], fetchData);
+  console.log(data);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <React.Fragment>
       <div className="h-screen bg-[url('/images/UANGKITA.png')] bg-auto bg-center p-4">

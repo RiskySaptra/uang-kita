@@ -17,6 +17,7 @@
     "postbuild": "next-sitemap --config next-sitemap.config.js"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.35.7",
     "clsx": "^1.2.1",
     "lucide-react": "^0.260.0",
     "mongodb": "^6.1.0",
