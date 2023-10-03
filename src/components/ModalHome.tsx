@@ -51,24 +51,6 @@ const initPayload: Payload = {
   amount: '',
 };
 
-const processPayload = (selected: number, field: string) => {
-  const conditionCallback = (item: DataItem) => {
-    if (field === 'sender') {
-      if (item.id === -2) return false;
-    } else {
-      if (selected < 0) {
-        if (item.id === -2) return true;
-        return item.id > 0;
-      } else {
-        return item.id < 0;
-      }
-    }
-    return true;
-  };
-
-  return data.filter(conditionCallback);
-};
-
 const _baseUrl = process.env.BASE_URL;
 
 const addNewTransaction = async (payload: Payload) => {
@@ -93,6 +75,7 @@ export default function ModalHome() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [payload, setPayload] = useState<Payload>(initPayload);
+  const [isPayContribution, setIsPayContribution] = useState(false);
   const mutation = useMutation({
     mutationFn: addNewTransaction,
     onSuccess: async () => {
@@ -108,6 +91,8 @@ export default function ModalHome() {
     setIsModalOpen(false);
   };
 
+  // console.log(payContribution, 'test');
+
   const handleSelect = (
     e: React.ChangeEvent<HTMLSelectElement>,
     field: string
@@ -116,6 +101,23 @@ export default function ModalHome() {
       ...payload,
       [field]: Number(e.target.value),
     });
+  };
+
+  const handlePayContribution = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsPayContribution(e.target.checked);
+    if (e.target.checked) {
+      setPayload({
+        ...payload,
+        transactionName: 'Bayar Iuran Rumah',
+        receiver: -1,
+      });
+    } else {
+      setPayload({
+        ...payload,
+        transactionName: '',
+        receiver: 0,
+      });
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,6 +132,25 @@ export default function ModalHome() {
     setPayload(initPayload);
     setIsModalOpen(false);
     event.preventDefault();
+  };
+
+  const processPayload = (selected: number, field: string) => {
+    const conditionCallback = (item: DataItem) => {
+      if (field === 'sender') {
+        if (isPayContribution && item.id === -1) return false;
+        if (item.id === -2) return false;
+      } else {
+        if (selected < 0) {
+          if (item.id === -2) return true;
+          return item.id > 0;
+        } else {
+          return item.id < 0;
+        }
+      }
+      return true;
+    };
+
+    return data.filter(conditionCallback);
   };
 
   return (
@@ -155,10 +176,32 @@ export default function ModalHome() {
                 title='Berita Transaksi'
                 type='text'
                 value={payload.transactionName}
+                isDisabled={isPayContribution}
                 id='transactionName'
                 placeholder='Masukkan nama transaksi'
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
               />
+            </div>
+            <div className='mb-2'>
+              <label
+                htmlFor='toogleA'
+                className='flex cursor-pointer items-center'
+              >
+                <div className='relative'>
+                  <input
+                    id='toogleA'
+                    type='checkbox'
+                    defaultChecked={isPayContribution}
+                    onChange={handlePayContribution}
+                    className='sr-only'
+                  />
+                  <div className='h-4 w-10 rounded-full bg-gray-400 shadow-inner'></div>
+                  <div className='dot absolute -left-1 -top-1 h-6 w-6 rounded-full bg-white shadow transition'></div>
+                </div>
+                <div className='ml-3 block text-sm font-medium text-gray-900'>
+                  Bayar Iuran Rumah
+                </div>
+              </label>
             </div>
             <div>
               <SelectForm
@@ -173,6 +216,7 @@ export default function ModalHome() {
               <SelectForm
                 title='Penerima'
                 id='receiver'
+                isDisabled={isPayContribution}
                 value={payload.receiver}
                 data={processPayload(payload.sender, 'receiver')}
                 onChange={(e) => handleSelect(e, 'receiver')}
@@ -185,7 +229,7 @@ export default function ModalHome() {
                 value={payload.amount}
                 id='amount'
                 placeholder='Masukkan jumlah uang'
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
               />
             </div>
             <button

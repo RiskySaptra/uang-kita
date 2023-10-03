@@ -1,7 +1,8 @@
 'use client';
 import React from 'react';
+import ModalHome from '@/components/ModalHome';
 
-import ModalHome from '@/app/home/ModalHome';
+import DropDownHome from '@/app/home/DropDownHome';
 import TableHome from '@/app/home/TableHome';
 
 export default function page() {
