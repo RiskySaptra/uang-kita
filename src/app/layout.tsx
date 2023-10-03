@@ -1,9 +1,7 @@
 'use client';
-
 import * as React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-
 import '@/styles/globals.css';
+import { QueryClientProvider, QueryClient } from 'react-query';
 
 // // !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
 // // import '@/styles/colors.css';
