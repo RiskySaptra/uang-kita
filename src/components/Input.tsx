@@ -7,6 +7,7 @@ interface InputProps {
   placeholder: string;
   value: string | number;
   isDisabled?: boolean;
+  err?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -18,10 +19,11 @@ const InputForm: React.FC<InputProps> = ({
   value,
   onChange,
   isDisabled,
+  err,
 }) => {
   return (
-    <div className='mb-2 w-full'>
-      <label className='mb-2 block text-sm font-medium text-gray-900 '>
+    <div className='mb-1 w-full'>
+      <label className='mb-1 block text-sm font-medium text-gray-900 '>
         {title}
       </label>
       <input
@@ -32,8 +34,10 @@ const InputForm: React.FC<InputProps> = ({
         onChange={onChange}
         className='block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-gray-500 focus:ring-gray-500 disabled:text-gray-500'
         placeholder={placeholder}
-        required
       />
+      <label className='mt-1 block text-sm font-medium text-red-600 '>
+        {err}
+      </label>
     </div>
   );
 };
