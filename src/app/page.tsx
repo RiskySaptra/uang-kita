@@ -20,6 +20,7 @@ export interface TotalDebtProps {
 
 const _baseUrl = process.env.BASE_URL;
 
+// move to api handlers
 const getDataBalanceAmount = async () => {
   try {
     const data = await fetch(`${_baseUrl}api/total-balance-amount`, {
@@ -51,6 +52,7 @@ const getDataTotalDebt = async () => {
   }
 };
 
+// move to utils
 const sumDebt = (data?: TotalDebtProps[]) => {
   if (!data) return 0;
   return data.reduce((prev, curr) => {
@@ -78,7 +80,9 @@ export default function HomePage() {
         <Card
           title='Total Amount in the Account'
           amount={formatCurrency(
-            balanceAmount ? Number(balanceAmount.total_balance) : 0
+            balanceAmount?.total_balance
+              ? Number(balanceAmount.total_balance)
+              : 0
           )}
         />
         <Card
