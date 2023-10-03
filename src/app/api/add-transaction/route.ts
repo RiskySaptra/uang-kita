@@ -21,8 +21,9 @@ export async function POST(req: NextRequest) {
     if (sender === -1 && receiver > 0) {
       const result = await db
         .collection('transactions')
-        .aggregate(_findTotalDebt(receiver))
+        .aggregate(_findTotalDebt(1))
         .toArray();
+
       if (amount > result[0].difference) {
         return NextResponse.json(
           {
