@@ -16,7 +16,7 @@ const data: DataItem[] = [
     name: 'Risky',
   },
   {
-    id: 2,
+    id: 4,
     name: 'Mahesa',
   },
   {
@@ -24,7 +24,7 @@ const data: DataItem[] = [
     name: 'Zamhadi',
   },
   {
-    id: 4,
+    id: 2,
     name: 'Kevin',
   },
   {
