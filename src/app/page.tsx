@@ -6,9 +6,8 @@ import { useQuery } from 'react-query';
 import { formatCurrency } from '@/lib/utils';
 
 import Card from '@/components/Card';
+import ModalHome from '@/components/ModalHome';
 import Table from '@/components/Table';
-
-import ModalHome from '@/app/home/ModalHome';
 
 interface BalanceAmountProps {
   total_balance: number;

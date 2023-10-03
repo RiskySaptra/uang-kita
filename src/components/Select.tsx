@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { DataItem } from '@/app/home/ModalHome';
+import { DataItem } from '@/components/ModalHome';
 
 export interface Selectdata {
   id: number;
@@ -12,6 +12,7 @@ export interface SelectProps {
   title: string;
   id: string;
   data: DataItem[];
+  isDisabled?: boolean;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
@@ -21,6 +22,7 @@ const SelectForm: React.FC<SelectProps> = ({
   title,
   data,
   onChange,
+  isDisabled,
 }) => {
   return (
     <div className='mb-2'>
@@ -33,6 +35,7 @@ const SelectForm: React.FC<SelectProps> = ({
       <select
         id={id}
         value={value}
+        disabled={isDisabled}
         onChange={onChange}
         className='block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-gray-500 focus:ring-gray-500 '
       >
