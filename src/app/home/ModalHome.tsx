@@ -41,14 +41,14 @@ interface Payload {
   transactionName: string;
   sender: number;
   receiver: number;
-  amount: number;
+  amount: number | string;
 }
 
 const initPayload: Payload = {
   transactionName: '',
   sender: 0,
   receiver: 0,
-  amount: 0,
+  amount: '',
 };
 
 const processPayload = (selected: number, field: string) => {
