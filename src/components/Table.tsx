@@ -20,6 +20,8 @@ interface Transaction {
   tx_amount: string;
 }
 
+export const fetchCache = 'force-no-store';
+
 const _baseUrl = process.env.BASE_URL;
 const getDataTable = async () => {
   try {

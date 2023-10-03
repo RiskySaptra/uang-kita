@@ -19,6 +19,8 @@ export interface TotalDebtProps {
   total_debt: number;
 }
 
+export const fetchCache = 'force-no-store';
+
 const _baseUrl = process.env.BASE_URL;
 
 const getDataBalanceAmount = async () => {
