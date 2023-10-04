@@ -58,7 +58,7 @@ export default function Table() {
   );
   return (
     <>
-      <div className='mt-2 flex'>
+      <div className='mt-2 flex content-end'>
         <ModalHome />
         <SelectMonth
           value={month}
