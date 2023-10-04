@@ -92,7 +92,7 @@ const getDataTotalExpense = async () => {
 
 // move to utils
 const sumTotal = (data?: TotalSumProps[]) => {
-  if (!data) return 0;
+  if (!data?.length) return 0;
   return data.reduce((prev, curr) => {
     return (prev += curr.total);
   }, 0);
