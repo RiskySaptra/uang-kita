@@ -105,7 +105,7 @@ export default function Table() {
                   </tr>
                 </thead>
                 <tbody className='divide-y divide-gray-400 '>
-                  {data ? (
+                  {data?.length ? (
                     data.map((item: Transaction) => (
                       <TableRow
                         key={item._id}
@@ -137,18 +137,30 @@ export default function Table() {
 
 function TableRow({ name, date, sender, receiver, amount }: TableRowProps) {
   const parsed = dayjs(date).format('DD MMMM YYYY');
+  const statusColor = (reciver: string) => {
+    if (reciver === 'pengeluaran') return 'bg-red-500';
+    if (reciver === 'rumah') return 'bg-green-500';
+    return 'bg-blue-500';
+  };
   return (
     <tr>
       <td className='whitespace-nowrap px-6 py-4 text-sm font-medium capitalize text-gray-800 '>
+        <span
+          className={`min-h-5 min-w-5 text mr-2 inline-block rounded-full ${statusColor(
+            receiver
+          )} text-transparent`}
+        >
+          |
+        </span>
         {name}
       </td>
       <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-800'>
         {date ? parsed : 'Loading'}
       </td>
-      <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-800'>
+      <td className='whitespace-nowrap px-6 py-4 text-sm capitalize text-gray-800'>
         {sender}
       </td>
-      <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-800'>
+      <td className='whitespace-nowrap px-6 py-4 text-sm capitalize text-gray-800'>
         {receiver}
       </td>
       <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-800'>
