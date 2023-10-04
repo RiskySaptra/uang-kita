@@ -1,4 +1,4 @@
-export const _transactionList = [
+export const _transactionList = (month?: number) => [
   {
     $lookup: {
       from: 'users',
@@ -29,6 +29,19 @@ export const _transactionList = [
       tx_amount: 1,
       tx_date: 1,
       created_by: 1,
+      createdAtMonth: {
+        $month: '$tx_date',
+      },
+    },
+  },
+  {
+    $match: {
+      createdAtMonth: month,
+    },
+  },
+  {
+    $sort: {
+      tx_date: -1,
     },
   },
 ];

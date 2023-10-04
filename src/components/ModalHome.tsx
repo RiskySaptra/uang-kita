@@ -181,7 +181,7 @@ export default function ModalHome() {
 
   return (
     <React.Fragment>
-      <div className='mt-5 flex justify-between'>
+      <div className='mt-6'>
         <button
           onClick={openModal}
           className='focus:shadow-outline inline-flex h-10 items-center justify-center rounded-lg bg-blue-900 px-6 font-medium tracking-wide text-white transition duration-200 hover:bg-blue-800 focus:outline-none'
