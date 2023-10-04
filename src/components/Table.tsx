@@ -248,7 +248,7 @@ const ToolTip: FC<Props> = ({ children, tooltip }): JSX.Element => {
       {tooltip ? (
         <span
           ref={tooltipRef}
-          className='invisible absolute top-[-35px] mt-2 whitespace-nowrap rounded bg-blue-800 p-1 px-3 text-white opacity-0 transition group-hover:visible group-hover:opacity-100'
+          className='invisible absolute top-[-38px] mt-2 whitespace-nowrap rounded bg-blue-800 p-1 px-3 text-white opacity-0 transition group-hover:visible group-hover:opacity-100'
         >
           {tooltip}
         </span>
