@@ -10,9 +10,9 @@ interface SettledDebtSummary {
 }
 
 interface Result {
-  user_id: number;
+  _id: number;
   name: string;
-  total_debt: number;
+  total: number;
 }
 
 export interface InputData {
@@ -36,9 +36,9 @@ export function processDebtData(inputData: InputData[]): Result[] {
       return [
         ...accumulator,
         {
-          user_id: debt.user_id,
+          _id: debt.user_id,
           name: debt.name,
-          total_debt: debt.total_debt - settled_debt,
+          total: debt.total_debt - settled_debt,
         },
       ];
     },

@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 
 import { connectToDatabase } from '@/lib/mongoDb-utils';
 
-import { _settledAndDebtSummary } from '@/app/api/house-debt/pipeline';
-import { InputData, processDebtData } from '@/app/api/house-debt/utils';
+import { _settledAndDebtSummary } from '@/app/api/total-debt/pipeline';
+import { InputData, processDebtData } from '@/app/api/total-debt/utils';
 
 export async function GET() {
   try {

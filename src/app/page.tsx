@@ -12,10 +12,15 @@ import Table from '@/components/Table';
 interface BalanceAmountProps {
   total_balance: number;
 }
-export interface TotalDebtProps {
-  user_id: number;
+
+interface ExpenseProps {
+  _id: number;
+  total_expense: number;
+}
+export interface TotalSumProps {
+  _id: number;
   name: string;
-  total_debt: number;
+  total: number;
 }
 
 const _baseUrl = process.env.BASE_URL;
@@ -38,7 +43,7 @@ const getDataBalanceAmount = async () => {
 };
 const getDataTotalDebt = async () => {
   try {
-    const data = await fetch(`${_baseUrl}api/house-debt`, {
+    const data = await fetch(`${_baseUrl}api/total-debt`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -52,11 +57,45 @@ const getDataTotalDebt = async () => {
   }
 };
 
+const getDataTotalContribution = async () => {
+  try {
+    const data = await fetch(`${_baseUrl}api/total-contribution`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+      next: { revalidate: 0 },
+    });
+
+    return data.json();
+  } catch (error) {
+    // console.log(error);
+  }
+};
+
+const getDataTotalExpense = async () => {
+  try {
+    const data = await fetch(`${_baseUrl}api/total-expense`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+      next: { revalidate: 0 },
+    });
+
+    return data.json();
+  } catch (error) {
+    // console.log(error);
+  }
+};
+
 // move to utils
-const sumDebt = (data?: TotalDebtProps[]) => {
+const sumTotal = (data?: TotalSumProps[]) => {
   if (!data) return 0;
   return data.reduce((prev, curr) => {
-    return (prev += curr.total_debt);
+    return (prev += curr.total);
   }, 0);
 };
 
@@ -65,9 +104,19 @@ export default function HomePage() {
     'balance-amount',
     getDataBalanceAmount
   );
-  const { data: totalDebt } = useQuery<TotalDebtProps[]>(
+  const { data: totalDebt } = useQuery<TotalSumProps[]>(
     'total-debt',
     getDataTotalDebt
+  );
+
+  const { data: totalContribution } = useQuery<TotalSumProps[]>(
+    'total-contribution',
+    getDataTotalContribution
+  );
+
+  const { data: totalExpense } = useQuery<ExpenseProps>(
+    'total-expense',
+    getDataTotalExpense
   );
 
   return (
@@ -78,7 +127,7 @@ export default function HomePage() {
 
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4'>
         <Card
-          title='Total Amount in the Account'
+          title='Total Saldo Di Rekening'
           amount={formatCurrency(
             balanceAmount?.total_balance
               ? Number(balanceAmount.total_balance)
@@ -86,12 +135,23 @@ export default function HomePage() {
           )}
         />
         <Card
-          title='Total Debt'
-          amount={formatCurrency(sumDebt(totalDebt))}
+          title='Total Hutang Keseluruhan'
+          detailsTitle='Total Hutang'
+          amount={formatCurrency(sumTotal(totalDebt))}
           data={totalDebt}
         />
-        <Card title='contribution' amount={formatCurrency(0)} />
-        <Card title='Total Expenses' amount={formatCurrency(0)} />
+        <Card
+          title='Total Kontribusi Keseluruhan'
+          detailsTitle='Total Kontribusi'
+          amount={formatCurrency(sumTotal(totalContribution))}
+          data={totalContribution}
+        />
+        <Card
+          title='Total Penegeluaran'
+          amount={formatCurrency(
+            totalExpense?.total_expense ? Number(totalExpense.total_expense) : 0
+          )}
+        />
       </div>
 
       <ModalHome />
