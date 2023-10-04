@@ -54,12 +54,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // const result = await db.collection('transactions').insertOne(transasction);
-    // if (result) {
-    //   return NextResponse.json(result);
-    // } else {
-    //   return NextResponse.json({ error: 'Data not found' });
-    // }
+    const result = await db.collection('transactions').insertOne(transasction);
+    if (result) {
+      return NextResponse.json(result);
+    } else {
+      return NextResponse.json({ error: 'Data not found' });
+    }
   } catch (error) {
     return NextResponse.json({ error: 'An error occurred' });
   }
