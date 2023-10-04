@@ -6,7 +6,6 @@ import { useQuery } from 'react-query';
 import { formatCurrency } from '@/lib/utils';
 
 import Card from '@/components/Card';
-import ModalHome from '@/components/ModalHome';
 import Table from '@/components/Table';
 
 interface BalanceAmountProps {
@@ -154,7 +153,6 @@ export default function HomePage() {
         />
       </div>
 
-      <ModalHome />
       <Table />
     </main>
   );

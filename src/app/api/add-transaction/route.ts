@@ -6,9 +6,9 @@ import { formatCurrency } from '@/lib/utils';
 import { _findTotalDebt } from '@/app/api/add-transaction/pipeline';
 import { _totalBalanceAmount } from '@/app/api/total-balance-amount/pipeline';
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   const { transactionName, sender, receiver, amount, createdBy } =
-    await req.json();
+    await request.json();
   const transasction = {
     tx_name: transactionName,
     tx_sender: sender,
