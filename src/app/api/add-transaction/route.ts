@@ -7,15 +7,15 @@ import { _findTotalDebt } from '@/app/api/add-transaction/pipeline';
 import { _totalBalanceAmount } from '@/app/api/total-balance-amount/pipeline';
 
 export async function POST(req: NextRequest) {
-  const { transactionName, sender, receiver, amount } = await req.json();
-
+  const { transactionName, sender, receiver, amount, createdBy } =
+    await req.json();
   const transasction = {
     tx_name: transactionName,
     tx_sender: sender,
     tx_reciver: receiver,
     tx_amount: Number(amount),
     tx_date: new Date(),
-    created_by: 'asrool',
+    created_by: createdBy,
   };
 
   try {
@@ -58,10 +58,10 @@ export async function POST(req: NextRequest) {
     if (result) {
       return NextResponse.json(result);
     } else {
-      return NextResponse.json({ error: 'Data not found' });
+      return NextResponse.json({ error: 'Data not found' }, { status: 404 });
     }
   } catch (error) {
-    return NextResponse.json({ error: 'An error occurred' });
+    return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
   }
 }
 

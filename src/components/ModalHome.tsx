@@ -1,13 +1,13 @@
+import axios from 'axios';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
+import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 import InputForm from '@/components/Input';
 import Modal from '@/components/Modal';
 import SelectForm from '@/components/Select';
-import { toast } from 'react-toastify';
-import axios from 'axios';
 
 export interface DataItem {
   id: number;
@@ -46,6 +46,7 @@ interface Payload {
   sender: number;
   receiver: number;
   amount: number | string;
+  createdBy: string;
 }
 
 const initPayload: Payload = {
@@ -53,41 +54,62 @@ const initPayload: Payload = {
   sender: 0,
   receiver: 0,
   amount: '',
+  createdBy: '',
 };
 
 const _baseUrl = process.env.BASE_URL;
 
 const addNewTransaction = async (payload: Payload) => {
-  const { data: response } = await axios.post(
-    `${_baseUrl}api/add-transaction`,
-    payload,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-  return response.data;
+  return axios.post(`${_baseUrl}api/add-transaction`, payload, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 };
 
 export default function ModalHome() {
   const queryClient = useQueryClient();
-
+  const [userModal, setUserModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPayContribution, setIsPayContribution] = useState(false);
-  const mutation = useMutation({
+  const user =
+    typeof window !== 'undefined' ? localStorage.getItem('user') : '';
+
+  const mutation = useMutation<any, any, Payload>({
     mutationFn: addNewTransaction,
-    onSuccess: async (data: any) => {
+    onSuccess: async (data) => {
       await queryClient.refetchQueries();
-      toast(data.message);
+      toast(`Berhasil: ${data.data.insertedId}`, {
+        position: 'bottom-left',
+        autoClose: 200,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
     },
-    onError: (error: any) => {
-      toast(error.response.data.error);
+    onError: (error) => {
+      toast.error(error.response.data.error, {
+        position: 'bottom-left',
+        autoClose: 200,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
     },
   });
 
   const openModal = () => {
-    setIsModalOpen(true);
+    if (user) {
+      setIsModalOpen(true);
+    } else {
+      setUserModal(true);
+    }
   };
 
   const closeModal = () => {
@@ -113,10 +135,6 @@ export default function ModalHome() {
     return data.filter(conditionCallback);
   };
 
-  // sender dan receiver tidak boleh nol
-  // transactionName tidak boleh kosong
-  // amount tidak boleh kosong dan lebih dari 0
-
   const validationSchema = yup.object({
     transactionName: yup.string().required('Nama transaksi harus diisi'),
     sender: yup
@@ -132,8 +150,9 @@ export default function ModalHome() {
 
   const formik = useFormik({
     initialValues: initPayload,
-    // validationSchema: validationSchema,
+    validationSchema: validationSchema,
     onSubmit: async (values: Payload) => {
+      values.createdBy = user || 'none';
       mutation.mutate(values);
       resetForm();
       setIsModalOpen(false);
@@ -170,6 +189,7 @@ export default function ModalHome() {
           Add New Transaction
         </button>
       </div>
+      <AddUserIdentification state={[userModal, setUserModal]} />
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className='max-h-full md:w-[400px]'>
@@ -259,3 +279,45 @@ export default function ModalHome() {
     </React.Fragment>
   );
 }
+
+interface AddUserIdentificationProps {
+  state: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+}
+
+const AddUserIdentification: React.FC<AddUserIdentificationProps> = ({
+  state,
+}) => {
+  const [user, setUser] = useState<number>(0);
+  const setUserToStorage = () => {
+    if (user > 0) {
+      const username = data.find((itm) => itm.id === user);
+      localStorage.setItem('user', username?.name || '');
+      setUserModal(false);
+    }
+  };
+  const [userModal, setUserModal] = state;
+  return (
+    <Modal isOpen={userModal} onClose={() => setUserModal(false)}>
+      <div className='max-h-full md:w-[400px]'>
+        <div className='flex justify-center pb-2'>
+          <h1 className='text-xl font-bold'>Siapa anda</h1>
+        </div>
+        <div>
+          <SelectForm
+            title='Pengirim'
+            id='sender'
+            value={user}
+            data={data.filter((itm) => itm.id > 0)}
+            onChange={(e) => setUser(Number(e.target.value))}
+          />
+        </div>
+        <button
+          onClick={setUserToStorage}
+          className='focus:shadow-outline mt-2 inline-flex h-10 items-center justify-center rounded-lg bg-gray-900 px-6 font-medium tracking-wide text-white transition duration-200 hover:bg-gray-800 focus:outline-none'
+        >
+          Submit
+        </button>
+      </div>
+    </Modal>
+  );
+};

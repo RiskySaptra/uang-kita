@@ -2,15 +2,16 @@ import { useState } from 'react';
 
 import { formatCurrency } from '@/lib/utils';
 
-import { TotalDebtProps } from '@/app/page';
+import { TotalSumProps } from '@/app/page';
 
 interface CardProps {
   title: string;
   amount: string;
-  data?: TotalDebtProps[];
+  data?: TotalSumProps[];
+  detailsTitle?: string;
 }
 
-export default function Card({ title, amount, data }: CardProps) {
+export default function Card({ title, amount, data, detailsTitle }: CardProps) {
   const [open, setOpen] = useState<boolean>(false);
   const handelOpen = () => {
     if (data) {
@@ -38,13 +39,13 @@ export default function Card({ title, amount, data }: CardProps) {
                   Nama
                 </th>
                 <th scope='col' className='px-3 pb-2'>
-                  Total Hutang
+                  {detailsTitle}
                 </th>
               </tr>
             </thead>
             <tbody>
               {data.map((item) => (
-                <tr key={item.user_id}>
+                <tr key={item._id}>
                   <th
                     scope='row'
                     className='whitespace-nowrap px-3 py-[2px] font-medium capitalize text-gray-900 '
@@ -52,7 +53,7 @@ export default function Card({ title, amount, data }: CardProps) {
                     {item.name}
                   </th>
                   <td className='px-3 py-[2px]'>
-                    {formatCurrency(item.total_debt)}
+                    {formatCurrency(item.total)}
                   </td>
                 </tr>
               ))}
