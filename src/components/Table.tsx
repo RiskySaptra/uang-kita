@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import localeData from 'dayjs/plugin/localeData';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
+dayjs.extend(localeData);
 
 import { formatCurrency } from '@/lib/utils';
 
@@ -15,6 +16,7 @@ interface TableRowProps {
   sender: string;
   receiver: string;
   amount: string;
+  createdBy?: string;
 }
 
 interface Transaction {
@@ -24,6 +26,7 @@ interface Transaction {
   sender: string;
   receiver: string;
   tx_amount: string;
+  created_by: string;
 }
 
 export const fetchCache = 'force-no-store';
@@ -53,12 +56,14 @@ export default function Table() {
 
   const [month, setMonth] = useState(currentMonthIndex);
 
-  const { data } = useQuery<Transaction[]>(['transaction-list', month], () =>
-    getDataTable(month)
+  const { data, isLoading } = useQuery<Transaction[]>(
+    ['transaction-list', month],
+    () => getDataTable(month)
   );
+
   return (
     <>
-      <div className='mt-2 flex content-end'>
+      <div className='mt-6 flex '>
         <ModalHome />
         <SelectMonth
           value={month}
@@ -105,7 +110,13 @@ export default function Table() {
                   </tr>
                 </thead>
                 <tbody className='divide-y divide-gray-400 '>
-                  {data?.length ? (
+                  {isLoading && !data && <EmptyTableRow message='Loading' />}
+                  {!data ||
+                    (data?.length === 0 && (
+                      <EmptyTableRow message='Jajan laaaahh masa kosong !' />
+                    ))}
+                  {data &&
+                    data?.length > 0 &&
                     data.map((item: Transaction) => (
                       <TableRow
                         key={item._id}
@@ -114,17 +125,9 @@ export default function Table() {
                         sender={item.sender}
                         receiver={item.receiver}
                         amount={item.tx_amount}
+                        createdBy={item.created_by}
                       />
-                    ))
-                  ) : (
-                    <TableRow
-                      name='Loading'
-                      date=''
-                      sender='Loading'
-                      receiver='Loading'
-                      amount=''
-                    />
-                  )}
+                    ))}
                 </tbody>
               </table>
             </div>
@@ -135,7 +138,29 @@ export default function Table() {
   );
 }
 
-function TableRow({ name, date, sender, receiver, amount }: TableRowProps) {
+function EmptyTableRow({ message }: { message: string }) {
+  return (
+    <tr>
+      <td
+        colSpan={5}
+        className='whitespace-nowrap px-6 py-4 text-sm text-gray-800'
+      >
+        <p className='text-center text-2xl font-medium text-indigo-700'>
+          {message}
+        </p>
+      </td>
+    </tr>
+  );
+}
+
+function TableRow({
+  name,
+  date,
+  sender,
+  receiver,
+  amount,
+  createdBy,
+}: TableRowProps) {
   const parsed = dayjs(date).format('DD MMMM YYYY');
   const statusColor = (reciver: string) => {
     if (reciver === 'pengeluaran') return 'bg-red-500';
@@ -145,14 +170,16 @@ function TableRow({ name, date, sender, receiver, amount }: TableRowProps) {
   return (
     <tr>
       <td className='whitespace-nowrap px-6 py-4 text-sm font-medium capitalize text-gray-800 '>
-        <span
-          className={`min-h-5 min-w-5 text mr-2 inline-block rounded-full ${statusColor(
-            receiver
-          )} text-transparent`}
-        >
-          |
-        </span>
-        {name}
+        <ToolTip tooltip={`Di Buat Oleh: ${createdBy}`}>
+          <span
+            className={`min-h-5 min-w-5 text mr-2 inline-block rounded-full ${statusColor(
+              receiver
+            )} text-transparent`}
+          >
+            |
+          </span>
+          {name}
+        </ToolTip>
       </td>
       <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-800'>
         {date ? parsed : 'Loading'}
@@ -170,8 +197,6 @@ function TableRow({ name, date, sender, receiver, amount }: TableRowProps) {
   );
 }
 
-dayjs.extend(localeData);
-
 const SelectMonth = ({
   onChange,
   value,
@@ -181,12 +206,6 @@ const SelectMonth = ({
 }) => {
   return (
     <div className='ml-5 w-[140px]'>
-      <label
-        htmlFor='select-month'
-        className='mb-1 block text-sm font-medium text-white'
-      >
-        Pilih Bulan
-      </label>
       <select
         id='select-month'
         value={value}
@@ -199,6 +218,41 @@ const SelectMonth = ({
           </option>
         ))}
       </select>
+    </div>
+  );
+};
+
+import { FC, ReactNode, useRef } from 'react';
+
+interface Props {
+  children: ReactNode;
+  tooltip?: string;
+}
+
+const ToolTip: FC<Props> = ({ children, tooltip }): JSX.Element => {
+  const tooltipRef = useRef<HTMLSpanElement>(null);
+  const container = useRef<HTMLDivElement>(null);
+
+  return (
+    <div
+      ref={container}
+      onMouseEnter={({ clientX }) => {
+        if (!tooltipRef.current || !container.current) return;
+        const { left } = container.current.getBoundingClientRect();
+
+        tooltipRef.current.style.left = clientX - left + 'px';
+      }}
+      className='group relative inline-block'
+    >
+      {children}
+      {tooltip ? (
+        <span
+          ref={tooltipRef}
+          className='invisible absolute top-[-35px] mt-2 whitespace-nowrap rounded bg-blue-800 p-1 px-3 text-white opacity-0 transition group-hover:visible group-hover:opacity-100'
+        >
+          {tooltip}
+        </span>
+      ) : null}
     </div>
   );
 };
