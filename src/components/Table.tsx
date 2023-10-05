@@ -35,7 +35,7 @@ const _baseUrl = process.env.BASE_URL;
 const getDataTable = async (month: number) => {
   try {
     const data = await fetch(
-      `${_baseUrl}api/transactions-list?month=${month}`,
+      `${_baseUrl}/api/transactions-list?month=${month}`,
       {
         method: 'GET',
         headers: {
@@ -53,9 +53,7 @@ const getDataTable = async (month: number) => {
 
 export default function Table() {
   const currentMonthIndex = dayjs(new Date()).month() + 1;
-
   const [month, setMonth] = useState(currentMonthIndex);
-
   const { data, isLoading } = useQuery<Transaction[]>(
     ['transaction-list', month],
     () => getDataTable(month)

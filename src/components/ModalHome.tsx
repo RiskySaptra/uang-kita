@@ -60,7 +60,7 @@ const initPayload: Payload = {
 const _baseUrl = process.env.BASE_URL;
 
 const addNewTransaction = async (payload: Payload) => {
-  return axios.post(`${_baseUrl}api/add-transaction`, payload, {
+  return axios.post(`${_baseUrl}/api/add-transaction`, payload, {
     headers: {
       'Content-Type': 'application/json',
     },
