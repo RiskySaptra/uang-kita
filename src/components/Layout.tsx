@@ -1,17 +1,20 @@
-import { Metadata } from 'next';
+'use client';
 import * as React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
-import '@/styles/colors.css';
-
-export const metadata: Metadata = {
-  title: 'Components',
-  description: 'Pre-built components with awesome default',
-};
+import ToastProvider from '@/components/ToastProvider';
+const queryClient = new QueryClient();
 
 export default function ComponentsLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <body>
+        <ToastProvider>{children}</ToastProvider>
+      </body>
+    </QueryClientProvider>
+  );
 }
