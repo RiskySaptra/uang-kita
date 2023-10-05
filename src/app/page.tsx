@@ -42,7 +42,7 @@ const getDataBalanceAmount = async () => {
 };
 const getDataTotalDebt = async () => {
   try {
-    const data = await fetch(`${_baseUrl}api/total-debt`, {
+    const data = await fetch(`${_baseUrl}/api/total-debt`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
