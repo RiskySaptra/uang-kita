@@ -48,11 +48,15 @@ export default function Card({ title, amount, data, detailsTitle }: CardProps) {
                 <tr key={item._id}>
                   <th
                     scope='row'
-                    className='whitespace-nowrap px-3 py-[2px] font-medium capitalize text-gray-900 '
+                    className='whitespace-nowrap px-3 py-[2px] font-medium capitalize text-gray-900'
                   >
                     {item.name}
                   </th>
-                  <td className='px-3 py-[2px]'>
+                  <td
+                    className={`px-3 py-[2px]  ${
+                      item.total > 0 ? 'text-gray-900' : 'text-red-600'
+                    }`}
+                  >
                     {formatCurrency(item.total)}
                   </td>
                 </tr>

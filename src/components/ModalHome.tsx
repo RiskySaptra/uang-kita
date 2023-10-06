@@ -79,9 +79,12 @@ export default function ModalHome() {
     mutationFn: addNewTransaction,
     onSuccess: async (data) => {
       await queryClient.refetchQueries();
+      resetForm();
+      setIsModalOpen(false);
+      setIsPayContribution(false);
       toast(`Berhasil: ${data.data.insertedId}`, {
         position: 'bottom-left',
-        autoClose: 400,
+        autoClose: 4000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -93,7 +96,7 @@ export default function ModalHome() {
     onError: (error) => {
       toast.error(error.response.data.error, {
         position: 'bottom-left',
-        autoClose: 400,
+        autoClose: 4000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -145,7 +148,7 @@ export default function ModalHome() {
       .number()
       .notOneOf([0], 'Pilih penerima')
       .required('Penerima harus diisi'),
-    amount: yup.number().required('Jumlah uang harus diisi'),
+    amount: yup.string().required('Jumlah uang harus diisi'),
   });
 
   const formik = useFormik({
@@ -154,9 +157,6 @@ export default function ModalHome() {
     onSubmit: async (values: Payload) => {
       values.createdBy = user || 'none';
       mutation.mutate(values);
-      resetForm();
-      setIsModalOpen(false);
-      setIsPayContribution(false);
     },
   });
 
@@ -179,6 +179,11 @@ export default function ModalHome() {
     }
   };
 
+  function formatNumber(n: string) {
+    // format number 1000000 to 1,234,567
+    return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
   return (
     <React.Fragment>
       <div>
@@ -194,7 +199,7 @@ export default function ModalHome() {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className='max-h-full md:w-[400px]'>
           <div className='flex justify-center pb-2'>
-            <h1 className='text-xl font-bold'>Pencatatan Dimulai</h1>
+            <h1 className='text-xl font-bold'>Edit Transaksi</h1>
           </div>
 
           <form onSubmit={formik.handleSubmit}>
@@ -260,7 +265,7 @@ export default function ModalHome() {
               <InputForm
                 title='Jumlah'
                 type='text'
-                value={formik.values.amount}
+                value={formatNumber(formik.values.amount.toString())}
                 id='amount'
                 placeholder='Masukkan jumlah uang'
                 onChange={formik.handleChange}
@@ -288,6 +293,7 @@ const AddUserIdentification: React.FC<AddUserIdentificationProps> = ({
   state,
 }) => {
   const [user, setUser] = useState<number>(0);
+  const [userModal, setUserModal] = state;
   const setUserToStorage = () => {
     if (user > 0) {
       const username = data.find((itm) => itm.id === user);
@@ -295,7 +301,7 @@ const AddUserIdentification: React.FC<AddUserIdentificationProps> = ({
       setUserModal(false);
     }
   };
-  const [userModal, setUserModal] = state;
+
   return (
     <Modal isOpen={userModal} onClose={() => setUserModal(false)}>
       <div className='max-h-full md:w-[400px]'>
