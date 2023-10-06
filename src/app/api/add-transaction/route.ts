@@ -9,11 +9,13 @@ import { _totalBalanceAmount } from '@/app/api/total-balance-amount/pipeline';
 export async function POST(request: NextRequest) {
   const { transactionName, sender, receiver, amount, createdBy } =
     await request.json();
+
+  const parsedAmount = Number(amount.replace(/[^a-zA-Z0-9 ]/g, ''));
   const transasction = {
     tx_name: transactionName,
     tx_sender: sender,
     tx_reciver: receiver,
-    tx_amount: Number(amount),
+    tx_amount: parsedAmount,
     tx_date: new Date(),
     created_by: createdBy,
   };
@@ -26,10 +28,10 @@ export async function POST(request: NextRequest) {
         .collection('transactions')
         .aggregate(_totalBalanceAmount)
         .toArray();
-      if (amount > total_balance[0].total_balance) {
+      if (parsedAmount > total_balance[0].total_balance) {
         return NextResponse.json(
           {
-            error: `saldo tidak cukup silahkan mencopet dulu`,
+            error: `saldo tidak cukup silahkan sesuaikan jumlah pembayaran`,
           },
           { status: 400 }
         );
@@ -40,13 +42,13 @@ export async function POST(request: NextRequest) {
           .aggregate(_findTotalDebt(receiver))
           .toArray();
 
-        if (amount > result[0].difference || result[0].difference === 0) {
+        if (parsedAmount > result[0].difference || result[0].difference === 0) {
           const debt = result[0].difference <= 0 ? 0 : result[0].difference;
           return NextResponse.json(
             {
-              error: `You have attempted to make a payment that exceeds the debt! (Actual debt: ${formatCurrency(
+              error: `Anda telah mencoba melakukan pembayaran yang melebihi utangnya! (Hutang aktual:  ${formatCurrency(
                 debt
-              )} Amount paid: ${formatCurrency(amount)})`,
+              )} Jumlah yang dibayarkan: ${formatCurrency(parsedAmount)})`,
             },
             { status: 400 }
           );

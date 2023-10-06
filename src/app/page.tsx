@@ -3,10 +3,16 @@
 import React from 'react';
 import { useQuery } from 'react-query';
 
-import { formatCurrency } from '@/lib/utils';
+import {
+  getDataBalanceAmount,
+  getDataTotalContribution,
+  getDataTotalDebt,
+  getDataTotalExpense,
+} from '@/lib/handler/page-handler';
+import { formatCurrency, sumTotal } from '@/lib/utils';
 
 import Card from '@/components/Card';
-import Table from '@/components/Table';
+import Table from '@/components/table/Table';
 
 interface BalanceAmountProps {
   total_balance: number;
@@ -21,82 +27,6 @@ export interface TotalSumProps {
   name: string;
   total: number;
 }
-
-const _baseUrl = process.env.BASE_URL;
-
-// move to api handlers
-const getDataBalanceAmount = async () => {
-  try {
-    const data = await fetch(`${_baseUrl}/api/total-balance-amount`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-      next: { revalidate: 0 },
-    });
-    return data.json();
-  } catch (error) {
-    // console.log(error);
-  }
-};
-const getDataTotalDebt = async () => {
-  try {
-    const data = await fetch(`${_baseUrl}/api/total-debt`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-      next: { revalidate: 0 },
-    });
-    return data.json();
-  } catch (error) {
-    // console.log(error);
-  }
-};
-
-const getDataTotalContribution = async () => {
-  try {
-    const data = await fetch(`${_baseUrl}/api/total-contribution`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-      next: { revalidate: 0 },
-    });
-
-    return data.json();
-  } catch (error) {
-    // console.log(error);
-  }
-};
-
-const getDataTotalExpense = async () => {
-  try {
-    const data = await fetch(`${_baseUrl}/api/total-expense`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-      next: { revalidate: 0 },
-    });
-
-    return data.json();
-  } catch (error) {
-    // console.log(error);
-  }
-};
-
-// move to utils
-const sumTotal = (data?: TotalSumProps[]) => {
-  if (!data?.length) return 0;
-  return data.reduce((prev, curr) => {
-    return (prev += curr.total);
-  }, 0);
-};
 
 export default function HomePage() {
   const { data: balanceAmount } = useQuery<BalanceAmountProps>(
