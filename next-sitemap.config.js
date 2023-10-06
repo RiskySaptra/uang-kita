@@ -4,7 +4,6 @@
  */
 module.exports = {
   // !STARTERCONF Change the siteUrl
-  /** Without additional '/' on the end, e.g. https://theodorusclarence.com */
   siteUrl: process.env.BASE_URL,
   generateRobotsTxt: true,
   robotsTxtOptions: {

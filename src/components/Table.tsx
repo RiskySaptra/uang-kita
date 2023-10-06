@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import localeData from 'dayjs/plugin/localeData';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
-dayjs.extend(localeData);
 
 import { formatCurrency } from '@/lib/utils';
 
@@ -30,6 +29,7 @@ interface Transaction {
 }
 
 export const fetchCache = 'force-no-store';
+dayjs.extend(localeData);
 
 const _baseUrl = process.env.BASE_URL;
 const getDataTable = async (month: number) => {
@@ -91,13 +91,7 @@ export default function Table() {
                       scope='col'
                       className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-700'
                     >
-                      Pengirim
-                    </th>
-                    <th
-                      scope='col'
-                      className='px-6 py-3 text-left text-sm font-medium uppercase text-gray-700'
-                    >
-                      Penerima
+                      Transaksi
                     </th>
                     <th
                       scope='col'
@@ -160,17 +154,43 @@ function TableRow({
   createdBy,
 }: TableRowProps) {
   const parsed = dayjs(date).format('DD MMMM YYYY');
-  const statusColor = (reciver: string) => {
+  const statusColor = (sender: string, reciver: string) => {
+    if (sender === 'rekonsiliasi') return 'bg-yellow-500';
     if (reciver === 'pengeluaran') return 'bg-red-500';
     if (reciver === 'rumah') return 'bg-green-500';
     return 'bg-blue-500';
   };
+
+  const transactionWording = (sender: string, receiver: string) => {
+    if (sender !== 'rumah') {
+      if (receiver === 'rumah') {
+        if (sender === 'rekonsiliasi') {
+          return 'Penyesuaian Saldo';
+        }
+        return `${sender} membayar kontribusi`;
+      }
+      if (receiver === 'pengeluaran') {
+        return `rumah hutang kepada ${sender}`;
+      }
+      return sender;
+    }
+
+    if (sender === 'rumah') {
+      if (receiver === 'pengeluaran') {
+        return 'pengeluaran rumah';
+      } else {
+        return `bayar hutang kepada ${receiver}`;
+      }
+    }
+  };
+
   return (
-    <tr>
+    <tr className='cursor-pointer hover:bg-gray-300'>
       <td className='whitespace-nowrap px-6 py-4 text-sm font-medium capitalize text-gray-800 '>
         <ToolTip tooltip={`Di Buat Oleh: ${createdBy}`}>
           <span
             className={`min-h-5 min-w-5 text mr-2 inline-block rounded-full ${statusColor(
+              sender,
               receiver
             )} text-transparent`}
           >
@@ -183,10 +203,7 @@ function TableRow({
         {date ? parsed : 'Loading'}
       </td>
       <td className='whitespace-nowrap px-6 py-4 text-sm capitalize text-gray-800'>
-        {sender}
-      </td>
-      <td className='whitespace-nowrap px-6 py-4 text-sm capitalize text-gray-800'>
-        {receiver}
+        {transactionWording(sender, receiver)}
       </td>
       <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-800'>
         {amount ? formatCurrency(Number(amount)) : 'Loading'}
