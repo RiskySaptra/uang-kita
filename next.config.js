@@ -1,4 +1,10 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('next').NextConfig} */
+
+
+const withPWA = require('next-pwa')({
+  dest: 'public'
+})
 const nextConfig = {
   env: {
     BASE_URL: process.env.BASE_URL,
@@ -62,4 +68,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withPWA(nextConfig)

@@ -1,12 +1,12 @@
 {
-  "theme_color": "#0f172a",
-  "background_color": "#0f172a",
+  "theme_color": "#312e81",
+  "background_color": "#312e81",
   "display": "standalone",
-  "scope": "/app",
+  "scope": "/",
   "start_url": "/",
   "name": "Uang Kita",
-  "short_name": "Komunis",
-  "description": "cara memanage uang dengan cara komunis",
+  "short_name": "Uang Kita",
+  "description": "dorm money management",
   "icons": [
     {
       "src": "/icon-192x192.png",
