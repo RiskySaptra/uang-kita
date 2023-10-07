@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 
 import { getDataTable } from '@/lib/handler/table-handler';
 
+import InputForm from '@/components/Input';
 import Modal from '@/components/Modal';
 import ModalHome from '@/components/ModalHome';
 import SelectMonth from '@/components/SelectMonth';
@@ -37,28 +38,11 @@ export default function Table() {
     <>
       <div className='mt-6 flex '>
         <ModalHome />
+        <ModalEditTrasaction state={[modalEdit, setModalEdit]} />
         <SelectMonth
           value={month}
           onChange={(e) => setMonth(Number(e.target.value))}
         />
-        <Modal isOpen={modalEdit} onClose={() => setModalEdit(false)}>
-          <div className='max-h-full md:w-[400px]'>
-            <div className='flex justify-center pb-2'>
-              <h1 className='text-xl font-bold'>Ubah Transaksi</h1>
-            </div>
-            <p className='text-md font-medium'>
-              Coming Soon Enough! (kalau ingat)
-            </p>
-            <div>Notes: hanya pengeluaran user yang boleh di ubah</div>
-            <div>
-              Notes: Soft delete data asli/sebelumnya di simpan di table backup
-              refrence objectId
-            </div>
-            <div>
-              Notes: Operasi mengunakan mongodb [$currentOp].transaction
-            </div>
-          </div>
-        </Modal>
       </div>
       <div className='mt-5 flex flex-col'>
         <div className='-m-1.5 overflow-x-auto'>
@@ -126,3 +110,51 @@ export default function Table() {
     </>
   );
 }
+
+interface ModalEditTrasactionProps {
+  state: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+}
+
+const ModalEditTrasaction = ({ state }: ModalEditTrasactionProps) => {
+  const [modalEdit, setModalEdit] = state;
+  return (
+    <Modal isOpen={modalEdit} onClose={() => setModalEdit(false)}>
+      <div className='max-h-full md:w-[400px]'>
+        <div className='flex justify-center pb-2'>
+          <h1 className='text-xl font-bold'>Ubah Transaksi (disabeld)</h1>
+        </div>
+
+        <form>
+          <div>
+            <InputForm
+              title='Berita Transaksi'
+              type='text'
+              value=''
+              // isDisabled={isPayContribution}
+              id='transactionName'
+              placeholder='Masukkan nama transaksi'
+              onChange={() => ''}
+              // err={formik?.errors?.transactionName}
+            />
+          </div>
+          <div>
+            <InputForm
+              title='Jumlah'
+              type='text'
+              value=''
+              id='amount'
+              placeholder='Masukkan jumlah uang'
+              onChange={() => ''}
+            />
+          </div>
+        </form>
+        <button
+          type='submit'
+          className='focus:shadow-outline mt-2 inline-flex h-10 items-center justify-center rounded-lg bg-gray-900 px-6 font-medium tracking-wide text-white transition duration-200 hover:bg-gray-800 focus:outline-none'
+        >
+          Submit
+        </button>
+      </div>
+    </Modal>
+  );
+};

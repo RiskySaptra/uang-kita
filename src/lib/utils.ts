@@ -18,6 +18,11 @@ export function formatCurrency(value: number): string {
   return formattedValue;
 }
 
+export function formatNumber(n: string) {
+  // format number 1000000 to 1,234,567
+  return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
 export const statusColor = (sender: string, reciver: string, type?: string) => {
   if (type === 'decoration') {
     if (sender === 'rekonsiliasi') return `decoration-yellow-500`;

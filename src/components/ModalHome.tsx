@@ -1,9 +1,11 @@
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import { toast } from 'react-toastify';
+import { toast, ToastContent } from 'react-toastify';
 import * as yup from 'yup';
+
+import { formatNumber } from '@/lib/utils';
 
 import InputForm from '@/components/Input';
 import Modal from '@/components/Modal';
@@ -12,6 +14,10 @@ import SelectForm from '@/components/Select';
 export interface DataItem {
   id: number;
   name: string;
+}
+
+interface InputError {
+  [x: string]: ToastContent<string>;
 }
 
 const data: DataItem[] = [
@@ -75,7 +81,7 @@ export default function ModalHome() {
   const user =
     typeof window !== 'undefined' ? localStorage.getItem('user') : '';
 
-  const mutation = useMutation<any, any, Payload>({
+  const mutation = useMutation<AxiosResponse, AxiosError<InputError>, Payload>({
     mutationFn: addNewTransaction,
     onSuccess: async (data) => {
       await queryClient.refetchQueries();
@@ -94,7 +100,7 @@ export default function ModalHome() {
       });
     },
     onError: (error) => {
-      toast.error(error.response.data.error, {
+      toast.error(error.response?.data.error, {
         position: 'bottom-left',
         autoClose: 4000,
         hideProgressBar: true,
@@ -179,11 +185,6 @@ export default function ModalHome() {
     }
   };
 
-  function formatNumber(n: string) {
-    // format number 1000000 to 1,234,567
-    return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  }
-
   return (
     <React.Fragment>
       <div>
@@ -199,7 +200,7 @@ export default function ModalHome() {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className='max-h-full md:w-[400px]'>
           <div className='flex justify-center pb-2'>
-            <h1 className='text-xl font-bold'>Edit Transaksi</h1>
+            <h1 className='text-xl font-bold'>Tambah Transaksi</h1>
           </div>
 
           <form onSubmit={formik.handleSubmit}>

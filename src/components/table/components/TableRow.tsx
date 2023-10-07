@@ -73,9 +73,11 @@ interface IconButtonProps {
 const IconButton = ({ disabled, onClick }: IconButtonProps) => {
   return (
     <button
-      onClick={onClick}
+      onClick={() => {
+        if (!disabled) onClick();
+      }}
       className={cn(
-        'active:text-blue-6600 ml-4 text-blue-800 hover:text-blue-600 active:text-blue-400',
+        'active:text-blue-6600 z-10 ml-4 text-blue-800 hover:text-blue-600 active:text-blue-400',
         disabled &&
           'cursor-not-allowed text-gray-400 hover:text-gray-400 active:text-gray-400'
       )}
