@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { FileEdit } from 'lucide-react';
+import { ChevronDown, ChevronUp, FileEdit } from 'lucide-react';
 import { useState } from 'react';
 
 import { cn, formatCurrency, transactionWording } from '@/lib/utils';
@@ -54,13 +54,12 @@ export function TableRow({
   const [isClosed, setIsClosed] = useState<boolean>(true);
   return (
     <>
-      <tr
-        onClick={() => setIsClosed(!isClosed)}
-        className='cursor-pointer active:bg-gray-300'
-      >
+      <tr>
         <td className='whitespace-nowrap px-6 py-4 text-sm font-medium capitalize text-gray-800 '>
           <NameTooltip
-            name={name}
+            name={`${name} ${
+              history.length > 0 && `(edited: ${history.length}x)`
+            }`}
             createdBy={createdBy}
             sender={sender}
             receiver={receiver}
@@ -73,15 +72,23 @@ export function TableRow({
           {transactionWording(sender, receiver)}
         </td>
         <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-800'>
-          {amount ? formatCurrency(Number(amount)) : 'Loading'}
+          {formatCurrency(Number(amount) || 0)}
         </td>
         <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-800'>
           <IconButton
+            icon={<FileEdit />}
             disabled={!isCannotEdit}
             onClick={() =>
               isEdit({ id, name, date, sender, receiver, amount, createdBy })
             }
           />
+          {history.length > 0 && (
+            <IconButton
+              disabled={!isCannotEdit}
+              icon={isClosed ? <ChevronDown /> : <ChevronUp />}
+              onClick={() => setIsClosed(!isClosed)}
+            />
+          )}
         </td>
       </tr>
       {history.length > 0 && (
@@ -121,12 +128,12 @@ const TransactionDetail = ({
 
               return (
                 <tr key={index}>
-                  <td className='w-[300px]'>{item.tx_name}</td>
-                  <td className='w-[200px]'>{parsed}</td>
-                  <td className='w-[200px]'>
+                  <td className='w-[200px]'>{item.tx_name}</td>
+                  <td className='w-[100px]'>{parsed}</td>
+                  <td className='w-[100px]'>
                     {formatCurrency(Number(item.tx_amount))}
                   </td>
-                  <td className='w-[200px]'>{item.edited_by}</td>
+                  <td className='w-[100px]'>{item.edited_by}</td>
                 </tr>
               );
             })}
@@ -140,21 +147,22 @@ const TransactionDetail = ({
 interface IconButtonProps {
   disabled?: boolean;
   onClick: () => void;
+  icon: any;
 }
 
-const IconButton = ({ disabled, onClick }: IconButtonProps) => {
+const IconButton = ({ disabled, onClick, icon }: IconButtonProps) => {
   return (
     <button
       onClick={() => {
         if (!disabled) onClick();
       }}
       className={cn(
-        'active:text-blue-6600 z-10 ml-4 text-blue-800 hover:text-blue-600 active:text-blue-400',
+        'active:text-blue-6600 z-10 mr-3 text-blue-800 hover:text-blue-600 active:text-blue-400',
         disabled &&
           'cursor-not-allowed text-gray-400 hover:text-gray-400 active:text-gray-400'
       )}
     >
-      <FileEdit />
+      {icon}
     </button>
   );
 };
