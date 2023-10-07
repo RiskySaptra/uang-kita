@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
           edited_by: createdBy,
         };
         await db
-          .collection('backup_transactions')
+          .collection('history_transactions')
           .updateOne(
             { _id: new ObjectId(id) },
             { $addToSet: { history: newData } },
