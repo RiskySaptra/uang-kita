@@ -7,9 +7,12 @@ import * as yup from 'yup';
 
 import { formatNumber } from '@/lib/utils';
 
+import AddUserIdentification from '@/components/AddUserIdentification';
 import InputForm from '@/components/Input';
 import Modal from '@/components/Modal';
 import SelectForm from '@/components/Select';
+
+import { data } from '@/constant/common';
 
 export interface DataItem {
   id: number;
@@ -19,33 +22,6 @@ export interface DataItem {
 interface InputError {
   [x: string]: ToastContent<string>;
 }
-
-const data: DataItem[] = [
-  {
-    id: 1,
-    name: 'Risky',
-  },
-  {
-    id: 4,
-    name: 'Mahesa',
-  },
-  {
-    id: 3,
-    name: 'Zamhadi',
-  },
-  {
-    id: 2,
-    name: 'Kevin',
-  },
-  {
-    id: -1,
-    name: 'Rumah',
-  },
-  {
-    id: -2,
-    name: 'Pengeluaran',
-  },
-];
 
 interface Payload {
   transactionName: string;
@@ -81,7 +57,11 @@ export default function ModalHome() {
   const user =
     typeof window !== 'undefined' ? localStorage.getItem('user') : '';
 
-  const mutation = useMutation<AxiosResponse, AxiosError<InputError>, Payload>({
+  const { mutate, isLoading } = useMutation<
+    AxiosResponse,
+    AxiosError<InputError>,
+    Payload
+  >({
     mutationFn: addNewTransaction,
     onSuccess: async (data) => {
       await queryClient.refetchQueries();
@@ -162,7 +142,7 @@ export default function ModalHome() {
     validationSchema: validationSchema,
     onSubmit: async (values: Payload) => {
       values.createdBy = user || 'none';
-      mutation.mutate(values);
+      mutate(values);
     },
   });
 
@@ -195,7 +175,10 @@ export default function ModalHome() {
           Buat Transaksi
         </button>
       </div>
-      <AddUserIdentification state={[userModal, setUserModal]} />
+      <AddUserIdentification
+        state={[userModal, setUserModal]}
+        modalForm={setIsModalOpen}
+      />
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className='max-h-full md:w-[400px]'>
@@ -275,7 +258,8 @@ export default function ModalHome() {
             </div>
             <button
               type='submit'
-              className='focus:shadow-outline mt-2 inline-flex h-10 items-center justify-center rounded-lg bg-gray-900 px-6 font-medium tracking-wide text-white transition duration-200 hover:bg-gray-800 focus:outline-none'
+              disabled={isLoading}
+              className='focus:shadow-outline mt-2 inline-flex h-10 items-center justify-center rounded-lg bg-gray-900 px-6 font-medium tracking-wide text-white transition duration-200 hover:bg-gray-800 focus:outline-none disabled:bg-gray-700'
             >
               Submit
             </button>
@@ -285,46 +269,3 @@ export default function ModalHome() {
     </React.Fragment>
   );
 }
-
-interface AddUserIdentificationProps {
-  state: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-}
-
-const AddUserIdentification: React.FC<AddUserIdentificationProps> = ({
-  state,
-}) => {
-  const [user, setUser] = useState<number>(0);
-  const [userModal, setUserModal] = state;
-  const setUserToStorage = () => {
-    if (user > 0) {
-      const username = data.find((itm) => itm.id === user);
-      localStorage.setItem('user', username?.name || '');
-      setUserModal(false);
-    }
-  };
-
-  return (
-    <Modal isOpen={userModal} onClose={() => setUserModal(false)}>
-      <div className='max-h-full md:w-[400px]'>
-        <div className='flex justify-center pb-2'>
-          <h1 className='text-xl font-bold'>Siapa anda</h1>
-        </div>
-        <div>
-          <SelectForm
-            title='Pengirim'
-            id='sender'
-            value={user}
-            data={data.filter((itm) => itm.id > 0)}
-            onChange={(e) => setUser(Number(e.target.value))}
-          />
-        </div>
-        <button
-          onClick={setUserToStorage}
-          className='focus:shadow-outline mt-2 inline-flex h-10 items-center justify-center rounded-lg bg-gray-900 px-6 font-medium tracking-wide text-white transition duration-200 hover:bg-gray-800 focus:outline-none'
-        >
-          Submit
-        </button>
-      </div>
-    </Modal>
-  );
-};
