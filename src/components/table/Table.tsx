@@ -6,10 +6,10 @@ import { useQuery } from 'react-query';
 
 import { getDataTable } from '@/lib/handler/table-handler';
 
-import InputForm from '@/components/Input';
-import Modal from '@/components/Modal';
+import AddUserIdentification from '@/components/AddUserIdentification';
 import ModalHome from '@/components/ModalHome';
 import SelectMonth from '@/components/SelectMonth';
+import { ModalEditTrasaction } from '@/components/table/components/RowsUtils';
 import {
   EmptyTableRow,
   TableRow,
@@ -25,6 +25,26 @@ interface Transaction {
   created_by: string;
 }
 
+export interface EditData {
+  id: string;
+  name: string;
+  date: Date | string;
+  sender?: string;
+  receiver?: string;
+  amount: string | number;
+  createdBy?: string;
+}
+
+export const initPayload: EditData = {
+  id: '',
+  name: '',
+  date: '',
+  sender: '0',
+  receiver: '0',
+  amount: '0',
+  createdBy: '',
+};
+
 export default function Table() {
   const currentMonthIndex = dayjs(new Date()).month() + 1;
   const [month, setMonth] = useState(currentMonthIndex);
@@ -33,12 +53,36 @@ export default function Table() {
     () => getDataTable(month)
   );
   const [modalEdit, setModalEdit] = useState<boolean>(false);
+  const [userModal, setUserModal] = useState<boolean>(false);
+  const [selectedData, setSelectedData] = useState<EditData>(initPayload);
+
+  const user =
+    typeof window !== 'undefined' ? localStorage.getItem('user') : '';
+
+  const openModal = (data: EditData) => {
+    setSelectedData(data);
+    if (user) {
+      setModalEdit(true);
+    } else {
+      setUserModal(true);
+    }
+  };
 
   return (
     <>
       <div className='mt-6 flex '>
         <ModalHome />
-        <ModalEditTrasaction state={[modalEdit, setModalEdit]} />
+        {selectedData.name && (
+          <ModalEditTrasaction
+            state={[modalEdit, setModalEdit]}
+            selectedDataState={[selectedData, setSelectedData]}
+          />
+        )}
+
+        <AddUserIdentification
+          state={[userModal, setUserModal]}
+          modalForm={setModalEdit}
+        />
         <SelectMonth
           value={month}
           onChange={(e) => setMonth(Number(e.target.value))}
@@ -92,13 +136,14 @@ export default function Table() {
                     data.map((item: Transaction) => (
                       <TableRow
                         key={item._id}
+                        id={item._id}
                         name={item.tx_name}
                         date={item.tx_date}
                         sender={item.sender}
                         receiver={item.receiver}
                         amount={item.tx_amount}
                         createdBy={item.created_by}
-                        isEdit={setModalEdit}
+                        isEdit={(data: EditData) => openModal(data)}
                       />
                     ))}
                 </tbody>
@@ -110,51 +155,3 @@ export default function Table() {
     </>
   );
 }
-
-interface ModalEditTrasactionProps {
-  state: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-}
-
-const ModalEditTrasaction = ({ state }: ModalEditTrasactionProps) => {
-  const [modalEdit, setModalEdit] = state;
-  return (
-    <Modal isOpen={modalEdit} onClose={() => setModalEdit(false)}>
-      <div className='max-h-full md:w-[400px]'>
-        <div className='flex justify-center pb-2'>
-          <h1 className='text-xl font-bold'>Ubah Transaksi (disabeld)</h1>
-        </div>
-
-        <form>
-          <div>
-            <InputForm
-              title='Berita Transaksi'
-              type='text'
-              value=''
-              // isDisabled={isPayContribution}
-              id='transactionName'
-              placeholder='Masukkan nama transaksi'
-              onChange={() => ''}
-              // err={formik?.errors?.transactionName}
-            />
-          </div>
-          <div>
-            <InputForm
-              title='Jumlah'
-              type='text'
-              value=''
-              id='amount'
-              placeholder='Masukkan jumlah uang'
-              onChange={() => ''}
-            />
-          </div>
-        </form>
-        <button
-          type='submit'
-          className='focus:shadow-outline mt-2 inline-flex h-10 items-center justify-center rounded-lg bg-gray-900 px-6 font-medium tracking-wide text-white transition duration-200 hover:bg-gray-800 focus:outline-none'
-        >
-          Submit
-        </button>
-      </div>
-    </Modal>
-  );
-};

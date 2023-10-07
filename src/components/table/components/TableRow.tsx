@@ -4,15 +4,17 @@ import { FileEdit } from 'lucide-react';
 import { cn, formatCurrency, transactionWording } from '@/lib/utils';
 
 import { NameTooltip } from '@/components/table/components/RowsUtils';
+import { EditData } from '@/components/table/Table';
 
 interface TableRowProps {
+  id: string;
   name: string;
   date: Date | string;
   sender: string;
   receiver: string;
   amount: string;
   createdBy?: string;
-  isEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  isEdit: (arg: EditData) => void;
 }
 
 export function EmptyTableRow({ message }: { message: string }) {
@@ -29,6 +31,7 @@ export function EmptyTableRow({ message }: { message: string }) {
 }
 
 export function TableRow({
+  id,
   name,
   date,
   sender,
@@ -59,7 +62,12 @@ export function TableRow({
         {amount ? formatCurrency(Number(amount)) : 'Loading'}
       </td>
       <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-800'>
-        <IconButton disabled={!isCannotEdit} onClick={() => isEdit(true)} />
+        <IconButton
+          disabled={!isCannotEdit}
+          onClick={() =>
+            isEdit({ id, name, date, sender, receiver, amount, createdBy })
+          }
+        />
       </td>
     </tr>
   );

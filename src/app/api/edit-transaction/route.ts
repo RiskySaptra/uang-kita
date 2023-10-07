@@ -1,64 +1,63 @@
-import { NextRequest } from 'next/server';
+import { ClientSession, ObjectId } from 'mongodb';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { connectToDatabase } from '@/lib/mongoDb-utils';
 
 export async function POST(request: NextRequest) {
-  const { transactionName, sender, receiver, amount, createdBy } =
-    await request.json();
+  const { id, name, amount, createdBy } = await request.json();
 
-  // const parsedAmount = Number(amount.replace(/[^a-zA-Z0-9 ]/g, ''));
-  // const transasction = {
-  //   tx_name: transactionName,
-  //   tx_sender: sender,
-  //   tx_reciver: receiver,
-  //   tx_amount: parsedAmount,
-  //   tx_date: new Date(),
-  //   created_by: createdBy,
-  // };
+  try {
+    const { client, db } = await connectToDatabase();
+    const session = client.startSession();
 
-  // try {
-  //   const { db } = await connectToDatabase();
+    const transactionOperations = async (session: ClientSession) => {
+      const parsedAmount = Number.isInteger(amount)
+        ? amount
+        : Number(amount.replace(/[^a-zA-Z0-9 ]/g, ''));
+      const transasction = {
+        tx_name: name,
+        tx_amount: parsedAmount,
+      };
+      const originalData = await db
+        .collection('transactions')
+        .findOne({ _id: new ObjectId(id) }, { session });
 
-  //   if (sender === -1) {
-  //     const total_balance = await db
-  //       .collection('transactions')
-  //       .aggregate(_totalBalanceAmount)
-  //       .toArray();
-  //     if (parsedAmount > total_balance[0].total_balance) {
-  //       return NextResponse.json(
-  //         {
-  //           error: `saldo tidak cukup silahkan sesuaikan jumlah pembayaran`,
-  //         },
-  //         { status: 400 }
-  //       );
-  //     }
-  //     if (receiver > 0) {
-  //       const result = await db
-  //         .collection('transactions')
-  //         .aggregate(_findTotalDebt(receiver))
-  //         .toArray();
+      if (originalData?._id) {
+        // Clone documents
+        const newData = {
+          ...originalData,
+          edited_date: new Date(),
+          edited_by: createdBy,
+        };
+        await db
+          .collection('backup_transactions')
+          .updateOne(
+            { _id: new ObjectId(id) },
+            { $addToSet: { history: newData } },
+            { session, upsert: true }
+          );
 
-  //       if (parsedAmount > result[0].difference || result[0].difference === 0) {
-  //         const debt = result[0].difference <= 0 ? 0 : result[0].difference;
-  //         return NextResponse.json(
-  //           {
-  //             error: `Anda telah mencoba melakukan pembayaran yang melebihi utangnya! (Hutang aktual:  ${formatCurrency(
-  //               debt
-  //             )} Jumlah yang dibayarkan: ${formatCurrency(parsedAmount)})`,
-  //           },
-  //           { status: 400 }
-  //         );
-  //       }
-  //     }
-  //   }
+        // Update a document
+        await db
+          .collection('transactions')
+          .updateOne(
+            { _id: new ObjectId(id) },
+            { $set: transasction },
+            { session }
+          );
+      }
+      // If any error occurs during the above operations, the transaction will be rolled back automatically
+    };
 
-  // const result = await db.collection('transactions').insertOne(transasction);
-  // if (result) {
-  //   return NextResponse.json(result);
-  // } else {
-  //   return NextResponse.json({ error: 'Data not found' }, { status: 404 });
-  // }
-  // } catch (error) {
-  //   return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
-  // }
+    await session.withTransaction(transactionOperations);
+
+    // Commit the transaction
+    await session.commitTransaction();
+
+    // Close the session
+    session.endSession();
+    return NextResponse.json({ message: `update ${id}` });
+  } catch (error) {
+    return NextResponse.json(error, { status: 500 });
+  }
 }
-
-export const dynamic = 'force-dynamic';

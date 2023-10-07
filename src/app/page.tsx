@@ -48,6 +48,8 @@ export default function HomePage() {
     getDataTotalExpense
   );
 
+  // console.log(process.env.NODE_ENV, 'ENV whut ?');
+
   return (
     <main className='container mx-auto px-2 py-10 sm:px-20 md:px-10'>
       <div className='flex justify-center pb-7'>

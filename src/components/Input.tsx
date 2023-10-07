@@ -7,7 +7,7 @@ interface InputProps {
   placeholder: string;
   value: string | number;
   isDisabled?: boolean;
-  err?: string;
+  err?: string | string[] | undefined;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
