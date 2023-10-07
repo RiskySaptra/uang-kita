@@ -76,7 +76,7 @@ export default function HomePage() {
           data={totalContribution}
         />
         <Card
-          title='Total Penegeluaran'
+          title='Total Pengeluaran'
           amount={formatCurrency(
             totalExpense?.total_expense ? Number(totalExpense.total_expense) : 0
           )}
