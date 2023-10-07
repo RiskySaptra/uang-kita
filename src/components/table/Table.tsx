@@ -23,6 +23,14 @@ interface Transaction {
   receiver: string;
   tx_amount: string;
   created_by: string;
+  history: TransactionHistoryProps[];
+}
+
+interface TransactionHistoryProps {
+  tx_name: string;
+  tx_amount: string;
+  edited_date: string;
+  edited_by: string;
 }
 
 export interface EditData {
@@ -143,6 +151,7 @@ export default function Table() {
                         receiver={item.receiver}
                         amount={item.tx_amount}
                         createdBy={item.created_by}
+                        history={item.history}
                         isEdit={(data: EditData) => openModal(data)}
                       />
                     ))}
