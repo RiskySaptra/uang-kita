@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { ChevronDown, ChevronUp, FileEdit } from 'lucide-react';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { cn, formatCurrency, transactionWording } from '@/lib/utils';
 
@@ -57,9 +57,7 @@ export function TableRow({
       <tr>
         <td className='whitespace-nowrap px-6 py-4 text-sm font-medium capitalize text-gray-800 '>
           <NameTooltip
-            name={`${name} ${
-              history.length > 0 && `(edited: ${history.length}x)`
-            }`}
+            name={name}
             createdBy={createdBy}
             sender={sender}
             receiver={receiver}
@@ -147,7 +145,7 @@ const TransactionDetail = ({
 interface IconButtonProps {
   disabled?: boolean;
   onClick: () => void;
-  icon: any;
+  icon: ReactNode;
 }
 
 const IconButton = ({ disabled, onClick, icon }: IconButtonProps) => {
